@@ -76,7 +76,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
   #appHeader{overflow:visible}
 
   #headerTabsRow{
-    display:none;
+    display:none!important;
     position:fixed;
     top:56px;
     left:0;right:0;
@@ -92,7 +92,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     z-index:99;
     padding:10px;
   }
-  #headerTabsRow.mobile-open{display:flex}
+  #headerTabsRow.mobile-open{display:flex!important}
   #headerTabsRow > div[style*="width:1px;height:24px"]{
     width:100%!important;height:1px!important;margin:4px 0;
   }
@@ -124,7 +124,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
      remplacées par un sélecteur compact "libellé actif + chevron" qui ouvre
      un menu déroulant plein largeur, au lieu d'un scroll horizontal caché. */
   #chartTabsBar > button,
-  #chartTabsBar > div[style*="width:1px;height:26px"]{display:none}
+  #chartTabsBar > div[style*="width:1px;height:26px"]{display:none!important}
   #chartTabsMobileWrap{display:block!important}
 
   #decisionSubTabs{display:none!important}
