@@ -134,6 +134,27 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
   #rawDataSheetTabsMobileWrap.has-sheets{display:block!important}
 
   .dec-group-btn.active{background:var(--cyan-light)!important;color:var(--navy)}
+
+  /* Tableaux à colonnes fixes (Résultats, Classements) : sur desktop la colonne
+     titre est flexible (1fr) et tout tient dans la largeur disponible. Sur mobile
+     il y a trop de colonnes fixes (jusqu'à 12 radios pour Airplay) pour tenir sur
+     un écran de téléphone : au lieu de les écraser (ce qui provoquait le
+     chevauchement des textes), on les laisse défiler horizontalement, header et
+     lignes synchronisés puisqu'ils partagent le même conteneur défilant. La
+     colonne titre passe en largeur fixe (170px) pour que toutes les lignes
+     s'alignent identiquement, quelle que soit la longueur du titre affiché. */
+  #mainTableScrollWrap,
+  #chartTableScrollWrap{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:6px;
+  }
+  #mainTableScrollWrap::-webkit-scrollbar,
+  #chartTableScrollWrap::-webkit-scrollbar{height:5px}
+  #mainTableScrollWrap::-webkit-scrollbar-thumb,
+  #chartTableScrollWrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+  #tableHeader,#chartTableHeader,
+  #tableBody > .grid-row,#chartTableBody > div{width:max-content;min-width:100%}
 }
 @media (max-width:820px){
   #appHeader{padding:0 8px}
@@ -1808,10 +1829,12 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     </div>
 
     <!-- Table header -->
-    <div id="chartTableHeader" style="display:none;padding:6px 14px;font-size:10px;font-weight:800;letter-spacing:.07em;color:var(--muted);background:var(--bg);border-radius:7px;margin-bottom:4px;display:grid;grid-template-columns:48px minmax(0,1fr) 160px;gap:8px;align-items:center"></div>
+    <div id="chartTableScrollWrap">
+      <div id="chartTableHeader" style="display:none;padding:6px 14px;font-size:10px;font-weight:800;letter-spacing:.07em;color:var(--muted);background:var(--bg);border-radius:7px;margin-bottom:4px;display:grid;grid-template-columns:48px 170px 160px;gap:8px;align-items:center"></div>
 
-    <!-- Table body -->
-    <div id="chartTableBody" style="display:flex;flex-direction:column;gap:3px"></div>
+      <!-- Table body -->
+      <div id="chartTableBody" style="display:flex;flex-direction:column;gap:3px"></div>
+    </div>
 
   </div>
 </div>
@@ -2193,9 +2216,11 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
   <div id="driveSyncPanel" style="display:none"></div>
 
   <!-- Table header -->
-  <div id="tableHeader" style="gap:4px;padding:6px 12px;font-size:10px;font-weight:800;letter-spacing:.07em;color:var(--muted);background:var(--bg);border-radius:7px;margin-bottom:4px;display:grid">
+  <div id="mainTableScrollWrap">
+    <div id="tableHeader" style="gap:4px;padding:6px 12px;font-size:10px;font-weight:800;letter-spacing:.07em;color:var(--muted);background:var(--bg);border-radius:7px;margin-bottom:4px;display:grid">
+    </div>
+    <div id="tableBody" style="display:flex;flex-direction:column;gap:3px"></div>
   </div>
-  <div id="tableBody" style="display:flex;flex-direction:column;gap:3px"></div>
 
   <!-- Légende -->
   <div class="card" style="margin-top:28px">
@@ -4878,7 +4903,7 @@ function renderTable(){
   // Colonnes airplay : propres (E2, RFM) un peu plus larges, concurrentes très compactes
   // Shazam Monde et Nostalgie retirés du tableau principal (simplification lecture) —
   // ils restent disponibles dans l'onglet Airplay des Classements / Comité d'Écoute / Radar.
-  const BASE_COLS = '44px minmax(0,1fr) 132px 82px 44px';
+  const BASE_COLS = '44px 170px 132px 82px 44px';
   const spyColStr  = spotifyLoaded ? ' 38px' : '';  // colonne SPY conditionnelle
   const MAIN_TABLE_RADIOS = AIRPLAY_RADIOS.filter(r => r.key !== 'nost');
   const apColsStr = airplayLoaded ? MAIN_TABLE_RADIOS.map(r => r.own ? '36px' : '32px').join(' ') : '';
@@ -8707,21 +8732,21 @@ function renderChartTable(){
                user-select:none"
       >${r.label}${arrow}</span>`;
     }).join('');
-    hdrEl.style.gridTemplateColumns = '26px 48px minmax(0,1fr) ' + AIRPLAY_RADIOS_CHART.map(()=>'52px').join(' ');
+    hdrEl.style.gridTemplateColumns = '26px 48px 170px ' + AIRPLAY_RADIOS_CHART.map(()=>'52px').join(' ');
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span>' + apCols;
   } else if(activeChartTab === 'spyfr'){
-    const spyGridH = airplayLoaded ? '26px 48px minmax(0,1fr) 90px 36px 64px' : '26px 48px minmax(0,1fr) 90px 36px';
+    const spyGridH = airplayLoaded ? '26px 48px 170px 90px 36px 64px' : '26px 48px 170px 90px 36px';
     hdrEl.style.gridTemplateColumns = spyGridH;
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span><span style="color:#1DB954;font-weight:800;text-align:right">Streams</span><span style="text-align:center">±</span>' + (airplayLoaded ? '<span style="color:var(--cyan);font-weight:800;text-align:center" title="Rang Europe 2 dans le classement airplay">E2 rang</span>' : '');
   } else if(activeChartTab === 'yt'){
-    const ytGridH = airplayLoaded ? '26px 48px minmax(0,1fr) 100px 64px' : '26px 48px minmax(0,1fr) 100px';
+    const ytGridH = airplayLoaded ? '26px 48px 170px 100px 64px' : '26px 48px 170px 100px';
     hdrEl.style.gridTemplateColumns = ytGridH;
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span><span style="color:#FF0000;font-weight:800;text-align:right">Vues</span>' + (airplayLoaded ? '<span style="color:var(--cyan);font-weight:800;text-align:center" title="Rang Europe 2 dans le classement airplay">E2 rang</span>' : '');
   } else if((activeChartTab === 'shzfr' || activeChartTab === 'dzfr' || activeChartTab === 'fh' || activeChartTab === 'amus' || activeChartTab === 'amfr' || activeChartTab === 'itus' || activeChartTab === 'itfr' || activeChartTab === 'bbus' || activeChartTab === 'bbg200') && airplayLoaded){
-    hdrEl.style.gridTemplateColumns = '26px 48px minmax(0,1fr) 64px 56px';
+    hdrEl.style.gridTemplateColumns = '26px 48px 170px 64px 56px';
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span><span style="color:var(--cyan);font-weight:800" title="Rang Europe 2 dans le classement airplay">E2 rang</span><span>LIENS</span>';
   } else {
-    hdrEl.style.gridTemplateColumns = '26px 48px minmax(0,1fr) 120px';
+    hdrEl.style.gridTemplateColumns = '26px 48px 170px 120px';
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span><span>LIENS</span>';
   }
 
@@ -8788,7 +8813,7 @@ function renderChartRow(e){
     const rowBorder = isUnderAlert ? '#FFCCCC' : isOverAlert ? 'var(--green-border)' : 'var(--border)';
 
     const apCols = AIRPLAY_RADIOS_CHART.map((radio,idx)=>airplayCell(radio, ap, idx, {fontSize:'12px', extraAlerts:{isUnderAlert,isOverAlert,compareKey:compKey}})).join('');
-    const gridCols = '26px 48px minmax(0,1fr) ' + AIRPLAY_RADIOS_CHART.map(()=>'52px').join(' ');
+    const gridCols = '26px 48px 170px ' + AIRPLAY_RADIOS_CHART.map(()=>'52px').join(' ');
     const evoDataAttr = JSON.stringify({artist:e.artist, title:e.title}).replace(/'/g,'&#39;').replace(/"/g,'&quot;');
 
     return `<div style="display:grid;grid-template-columns:${gridCols};gap:8px;align-items:center;padding:9px 14px;border-radius:8px;background:${rowBg};border:1.5px solid ${rowBorder};margin-bottom:0">
@@ -8831,7 +8856,7 @@ function renderChartRow(e){
         e2Cell = `<div style="font-size:12px;color:var(--border);text-align:center" title="Absent du classement airplay E2">–</div>`;
       }
     }
-    const gridColsSpy = showE2spy ? '26px 48px minmax(0,1fr) 90px 36px 64px' : '26px 48px minmax(0,1fr) 90px 36px';
+    const gridColsSpy = showE2spy ? '26px 48px 170px 90px 36px 64px' : '26px 48px 170px 90px 36px';
     const spySearchUrl = 'https://open.spotify.com/search/' + encodeURIComponent((e.title||'') + ' ' + (e.artist||''));
     return `<div style="display:grid;grid-template-columns:${gridColsSpy};gap:8px;align-items:center;padding:9px 14px;border-radius:8px;background:var(--white);border:1.5px solid ${e.rank<=10?'#A8E6CE':'var(--border)'};margin-bottom:0">
       ${comiteCheckbox(e.title, e.artist)}
@@ -8872,7 +8897,7 @@ function renderChartRow(e){
         e2CellYt = `<div style="font-size:12px;color:var(--border);text-align:center" title="Absent du classement airplay E2">–</div>`;
       }
     }
-    const gridColsYt = showE2yt ? '26px 48px minmax(0,1fr) 100px 64px' : '26px 48px minmax(0,1fr) 100px';
+    const gridColsYt = showE2yt ? '26px 48px 170px 100px 64px' : '26px 48px 170px 100px';
     const ytUrl = e.videoId
       ? 'https://www.youtube.com/watch?v=' + e.videoId
       : 'https://www.youtube.com/results?search_query=' + encodeURIComponent((e.artist||'') + ' ' + (e.title||''));
@@ -8893,7 +8918,7 @@ function renderChartRow(e){
   } else {
     // Shazam FR ou WW
     const showE2 = (activeChartTab === 'shzfr' || activeChartTab === 'dzfr' || activeChartTab === 'fh' || activeChartTab === 'amus' || activeChartTab === 'amfr' || activeChartTab === 'itus' || activeChartTab === 'itfr' || activeChartTab === 'bbus' || activeChartTab === 'bbg200') && airplayLoaded;
-    const gridCols = showE2 ? '26px 48px minmax(0,1fr) 64px 56px' : '26px 48px minmax(0,1fr) 120px';
+    const gridCols = showE2 ? '26px 48px 170px 64px 56px' : '26px 48px 170px 120px';
 
     let e2Cell = '';
     if(showE2){
