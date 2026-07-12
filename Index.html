@@ -205,6 +205,20 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
   }
   div[style*="border-radius:12px;overflow:hidden"]::-webkit-scrollbar{height:5px}
   div[style*="border-radius:12px;overflow:hidden"]::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+  /* Réglages IEDR ("Titres analysés (par visibilité digitale)" + Recalculer) :
+     rangée flex-wrap ambiguë sur mobile (le retour à la ligne du séparateur
+     vertical entre les items créait un grand vide) → pile verticale propre. */
+  #iedrControls{flex-direction:column!important;align-items:stretch!important}
+  #iedrControls > label{width:100%}
+  #iedrControls > label select{flex:1;min-width:0}
+  #iedrControls > span[style*="width:1px"]{display:none}
+  #iedrControls > button{margin-left:0!important;width:100%;justify-content:center}
+
+  /* Modale "Song Full Metrics" : le séparateur "Résultats terrain (Call Out) ↑
+     · Exposition Airplay & Digital ↓" était en white-space:nowrap et débordait
+     hors de la modale sur mobile → autorisé à passer à la ligne. */
+  .evoSectionDivider{white-space:normal!important;line-height:1.5}
 }
 @media (max-width:820px){
   #appHeader{padding:0 8px}
@@ -7527,7 +7541,7 @@ async function openTitleEvolutionModal(btn){
   // ── Séparation visuelle marquée entre Call Out et Airplay/Digital ──
   sections.push(`<div style="display:flex;align-items:center;gap:12px;margin:26px 0 20px">
     <div style="flex:1;height:3px;background:linear-gradient(90deg,var(--border) 0%,var(--cyan) 50%,var(--border) 100%);border-radius:2px"></div>
-    <span style="font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap">Résultats terrain (Call Out) ↑ · Exposition Airplay &amp; Digital ↓</span>
+    <span class="evoSectionDivider" style="font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;text-align:center">Résultats terrain (Call Out) ↑ · Exposition Airplay &amp; Digital ↓</span>
     <div style="flex:1;height:3px;background:linear-gradient(90deg,var(--border) 0%,var(--cyan) 50%,var(--border) 100%);border-radius:2px"></div>
   </div>`);
 
