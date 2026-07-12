@@ -7527,7 +7527,7 @@ async function openTitleEvolutionModal(btn){
   }
 
   // ── Section 1 : Call Out / OMT ──
-  sections.push(`<div style="margin-bottom:6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">📋 Call Out / OMT — ${escHtml(STATION_LABELS[ACTIVE_STATION])}</div>`);
+  sections.push(`<div style="margin-bottom:6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">📋 Recherche musicale ${escHtml(STATION_LABELS[ACTIVE_STATION])}</div>`);
   sections.push(`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:22px">
     ${buildEvoCard('Pot Score Tous', '🎯', vagueSeries.potTous, {color:'var(--cyan)', title, artist})}
     ${buildEvoCard('Pot Score P1',   '🎯', vagueSeries.potP1,   {color:'var(--blue)', title, artist})}
@@ -7541,7 +7541,7 @@ async function openTitleEvolutionModal(btn){
   // ── Séparation visuelle marquée entre Call Out et Airplay/Digital ──
   sections.push(`<div style="display:flex;align-items:center;gap:12px;margin:26px 0 20px">
     <div style="flex:1;height:3px;background:linear-gradient(90deg,var(--border) 0%,var(--cyan) 50%,var(--border) 100%);border-radius:2px"></div>
-    <span class="evoSectionDivider" style="font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;text-align:center">Résultats terrain (Call Out) ↑ · Exposition Airplay &amp; Digital ↓</span>
+    <span class="evoSectionDivider" style="font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;text-align:center">Résultats recherche (Call Out) ↑ · Exposition Airplay &amp; Digital ↓</span>
     <div style="flex:1;height:3px;background:linear-gradient(90deg,var(--border) 0%,var(--cyan) 50%,var(--border) 100%);border-radius:2px"></div>
   </div>`);
 
@@ -7558,7 +7558,7 @@ async function openTitleEvolutionModal(btn){
 
     // ── Sous-section AIRPLAY ──
     sections.push(`<div style="background:rgba(11,29,58,.03);border-radius:12px;padding:16px;margin-bottom:16px">
-      <div style="margin-bottom:10px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--navy)">📻 Airplay</div>`);
+      <div style="margin-bottom:10px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--navy)">📻 Airplay et Radio Metrics</div>`);
     if(!hasAnyAirplay){
       sections.push(`<div style="font-size:12px;color:var(--muted)">Aucun Airplay archivé pour ce titre.</div>`);
     } else {
@@ -7588,7 +7588,7 @@ async function openTitleEvolutionModal(btn){
 
     // ── Sous-section DIGITAL ──
     sections.push(`<div style="background:rgba(0,184,200,.04);border-radius:12px;padding:16px;margin-bottom:8px">
-      <div style="margin-bottom:10px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--navy)">🎧 Digital</div>`);
+      <div style="margin-bottom:10px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--navy)">🎧 Digital Metrics</div>`);
     if(!hasAnyDigital){
       sections.push(`<div style="font-size:12px;color:var(--muted)">Aucun classement digital archivé pour ce titre.</div>`);
     } else {
