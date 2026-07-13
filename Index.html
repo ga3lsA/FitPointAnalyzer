@@ -124,7 +124,8 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
      remplacées par un sélecteur compact "libellé actif + chevron" qui ouvre
      un menu déroulant plein largeur, au lieu d'un scroll horizontal caché. */
   #chartTabsBar > button,
-  #chartTabsBar > div[style*="width:1px;height:26px"]{display:none!important}
+  #chartTabsBar > div[style*="width:1px;height:26px"],
+  #chartAirplayGroup{display:none!important}
   #chartTabsMobileWrap{display:block!important}
 
   #decisionSubTabs{display:none!important}
@@ -1823,9 +1824,18 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
       </button>
       <div id="chartTabsMobileMenu" class="dec-group-menu" style="display:none;width:100%"></div>
     </div>
-    <button id="chartTabAirplay" onclick="switchChartTab('airplay')" style="height:34px;padding:0 14px;margin-right:10px;font-size:11px;font-weight:800;border:none;border-radius:8px;background:var(--blue-bg);color:var(--navy);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;box-shadow:0 0 0 1.5px var(--cyan);opacity:1">
-      📻 Airplay
-    </button>
+    <div class="dec-group" id="chartAirplayGroup" style="margin-right:10px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1.5px var(--cyan);opacity:1">
+      <button id="chartGroupBtnAirplay" onclick="switchChartTab('airplay')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
+        📻 Airplay
+      </button>
+      <button id="chartGroupChevronBtn" onclick="toggleChartAirplayGroup(event)" title="Autres vues (Europe Music Benchmark)" style="height:34px;width:26px;border:none;border-left:1px solid rgba(11,29,58,.12);background:transparent;color:var(--navy);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:0 8px 8px 0">
+        <svg class="dec-group-chevron" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div id="chartAirplayGroupMenu" class="dec-group-menu" style="display:none;top:40px;left:0">
+        <button id="chartTabAirplay" onclick="switchChartTab('airplay')" class="dec-subtab-item active"><span class="dec-subtab-ic">📻</span>Airplay (Yacast/Muzicast)</button>
+        <button id="chartTabEMB" onclick="switchChartTab('emb')" class="dec-subtab-item"><span class="dec-subtab-ic">🌍</span>Europe Music Benchmark</button>
+      </div>
+    </div>
     <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
     <button id="chartTabShzFR" onclick="switchChartTab('shzfr')" style="height:44px;padding:0 9px;font-size:11px;font-weight:600;border:none;border-bottom:2.5px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
       🇫🇷 Shazam France
@@ -1876,7 +1886,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
   <div id="chartsContentWrapper" style="max-width:1400px;margin:0 auto;padding:28px 16px">
 
     <!-- En-tête du classement actif -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+    <div id="chartStandardHeader" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
       <div>
         <div id="chartPageTitle" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--navy)">🇫🇷 Shazam France</div>
         <div id="chartPageSub"   style="font-size:12px;color:var(--muted);margin-top:3px"></div>
@@ -1917,6 +1927,68 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
 
       <!-- Table body -->
       <div id="chartTableBody" style="display:flex;flex-direction:column;gap:3px"></div>
+    </div>
+
+    <!-- Panneau Europe Music Benchmark (sous-onglet du groupe Airplay) -->
+    <div id="embChartsPanel" style="display:none">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Programmation musicale — radios clés France &amp; Europe</div>
+          <h2 style="font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--navy);line-height:1.15">Europe Music Benchmark</h2>
+          <div id="embSourceMeta" style="font-size:11.5px;color:var(--muted);margin-top:4px"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <select id="embSnapshotSelect" onchange="embOnSnapshotChange()" style="font-size:12px;padding:8px 12px;border-radius:9px;max-width:280px"></select>
+          <button onclick="embDeleteActiveSnapshot()" class="btn-ghost" title="Supprimer cet import de l'historique" style="font-size:12px;padding:8px 10px;border-radius:9px">🗑</button>
+          <button id="embCompareBtn" onclick="embToggleCompare()" class="btn-ghost" style="font-size:12px;padding:8px 14px;border-radius:9px">⇄ Comparer 2 imports</button>
+          <button onclick="embOpenImport()" class="btn-primary" style="font-size:12px;padding:8px 16px;border-radius:9px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;vertical-align:-2px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Importer un fichier
+          </button>
+          <input id="embFileInput" type="file" accept=".xlsx,.xls" style="display:none" onchange="embHandleFile(event)">
+        </div>
+      </div>
+      <!-- Comparaison : sélection du 2e import (masqué hors mode comparaison) -->
+      <div id="embCompareBar" style="display:none;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:9px;margin-bottom:10px">
+        <span style="font-size:11px;font-weight:700;color:var(--text2)">Comparer</span>
+        <select id="embCompareASelect" onchange="embOnCompareChange()" style="font-size:11.5px;padding:6px 10px;border-radius:7px"></select>
+        <span style="font-size:11px;color:var(--muted)">→</span>
+        <select id="embCompareBSelect" onchange="embOnCompareChange()" style="font-size:11.5px;padding:6px 10px;border-radius:7px"></select>
+        <span style="font-size:11px;color:var(--muted)">(delta = 2e import − 1er import, par station)</span>
+      </div>
+      <!-- Filtres -->
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+        <input id="embSearch" type="text" placeholder="Rechercher artiste ou titre…" oninput="embOnFilterChange()" style="width:220px;font-size:12px;padding:8px 12px;border-radius:9px">
+        <select id="embFilterGenre" onchange="embOnFilterChange()" style="font-size:12px;padding:8px 10px;border-radius:9px"><option value="ALL">Tous genres</option></select>
+        <select id="embFilterSubgenre" onchange="embOnFilterChange()" style="font-size:12px;padding:8px 10px;border-radius:9px"><option value="ALL">Tous sous-genres</option></select>
+        <select id="embFilterLangue" onchange="embOnFilterChange()" style="font-size:12px;padding:8px 10px;border-radius:9px"><option value="ALL">Toutes langues</option></select>
+        <select id="embFilterQuota" onchange="embOnFilterChange()" style="font-size:12px;padding:8px 10px;border-radius:9px"><option value="ALL">Tous critères quota</option></select>
+        <select id="embFilterMonitored" onchange="embOnFilterChange()" style="font-size:12px;padding:8px 10px;border-radius:9px">
+          <option value="ALL">Tous (suivis FPA ou non)</option>
+          <option value="YES">Suivis dans Fit Point / Call Out</option>
+          <option value="NO">Non suivis dans FPA</option>
+        </select>
+        <select id="embFilterStation" onchange="embOnFilterChange()" style="font-size:12px;padding:8px 10px;border-radius:9px"></select>
+        <input id="embFilterMinDiff" type="number" min="0" placeholder="Diff. min" oninput="embOnFilterChange()" style="width:88px;font-size:12px;padding:8px 10px;border-radius:9px">
+        <button onclick="embResetFilters()" class="btn-ghost" style="font-size:11.5px;padding:7px 12px;border-radius:9px">✕ Réinitialiser</button>
+        <span id="embResultCount" style="font-size:11.5px;color:var(--muted);margin-left:auto;white-space:nowrap"></span>
+      </div>
+
+      <div id="embEmptyState" style="display:none;padding:60px 24px;text-align:center;color:var(--muted)">
+        <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:8px">Aucune donnée importée</div>
+        <div style="font-size:13px;max-width:480px;margin:0 auto 18px">Importez l'export Progcast Muzicast (nombre de diffusions par titre et par radio) pour activer cette page.</div>
+        <button onclick="embOpenImport()" class="btn-primary" style="font-size:13px;padding:10px 20px;border-radius:9px">Importer un fichier</button>
+      </div>
+      <div id="embTableWrap" style="display:none">
+        <div id="embTableScroll" style="overflow-x:auto;border-radius:10px;border:1.5px solid var(--border);background:var(--white)">
+          <div id="embTableBody"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px">
+          <button onclick="embPrevPage()" class="btn-ghost" style="font-size:12px;padding:7px 14px;border-radius:8px">← Précédent</button>
+          <span id="embPageLabel" style="font-size:12px;color:var(--text2);font-weight:700"></span>
+          <button onclick="embNextPage()" class="btn-ghost" style="font-size:12px;padding:7px 14px;border-radius:8px">Suivant →</button>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -8051,14 +8123,20 @@ function restoreMainPage(){
 function switchChartTab(tab){
   activeChartTab = tab;
   chartAirplaySortKey = null; // reset tri au changement d'onglet
+  // Referme le menu déroulant Airplay/EMB s'il était ouvert
+  const airplayMenu = document.getElementById('chartAirplayGroupMenu');
+  if(airplayMenu) airplayMenu.style.display = 'none';
+  const airplayChevronEl = document.querySelector('#chartAirplayGroup .dec-group-chevron');
+  if(airplayChevronEl) airplayChevronEl.style.transform = '';
   // L'onglet Airplay affiche beaucoup plus de colonnes (12 radios) que les
   // autres classements (marché) : élargir le conteneur pour que le titre et
   // l'artiste restent lisibles sur une seule ligne, comme avant l'ajout
-  // d'Europe 1 / RTL / France Inter.
+  // d'Europe 1 / RTL / France Inter. Europe Music Benchmark a le même besoin
+  // (19 radios).
   const wrapEl = document.getElementById('chartsContentWrapper');
-  if(wrapEl) wrapEl.style.maxWidth = (tab === 'airplay') ? '1400px' : '900px';
-  const tabs = ['airplay','shzfr','shzww','spyfr','dzfr','fh','amus','amfr','itus','itfr','bbus','bbg200','yt'];
-  const ids  = ['chartTabAirplay','chartTabShzFR','chartTabShzWW','chartTabSpyFR','chartTabDzFR','chartTabFH','chartTabAmUS','chartTabAmFR','chartTabItUS','chartTabItFR','chartTabBbUS','chartTabBbG200','chartTabYt'];
+  if(wrapEl) wrapEl.style.maxWidth = (tab === 'airplay' || tab === 'emb') ? '1400px' : '900px';
+  const tabs = ['shzfr','shzww','spyfr','dzfr','fh','amus','amfr','itus','itfr','bbus','bbg200','yt'];
+  const ids  = ['chartTabShzFR','chartTabShzWW','chartTabSpyFR','chartTabDzFR','chartTabFH','chartTabAmUS','chartTabAmFR','chartTabItUS','chartTabItFR','chartTabBbUS','chartTabBbG200','chartTabYt'];
   // Couleur de marque de chaque plateforme, utilisée pour le soulignement de l'onglet actif
   const tabBrandColor = {
     chartTabShzFR: 'var(--cyan)', chartTabShzWW: 'var(--cyan)',
@@ -8072,17 +8150,23 @@ function switchChartTab(tab){
     const el = document.getElementById(id);
     if(!el) return;
     const active = tabs[i] === tab;
-    if(id === 'chartTabAirplay'){
-      // Style à part : fond bleu clair discret (distinct des classements marché,
-      // sans être aussi appuyé qu'un fond navy plein), anneau cyan renforcé si actif
-      el.style.boxShadow = active ? '0 0 0 1.5px var(--cyan)' : '0 0 0 1px var(--blue-border)';
-      el.style.opacity = active ? '1' : '.7';
-      return;
-    }
     el.style.borderBottomColor = active ? (tabBrandColor[id] || 'var(--cyan)') : 'transparent';
     el.style.color = active ? 'var(--navy)' : 'var(--muted)';
     el.style.fontWeight = active ? '800' : '600';
   });
+  // Groupe déroulant Airplay / Europe Music Benchmark : style à part — fond
+  // bleu clair discret (distinct des classements marché), anneau cyan
+  // renforcé dès que l'un des deux sous-onglets du groupe est actif.
+  const groupBtn = document.getElementById('chartAirplayGroup');
+  const inAirplayGroup = (tab === 'airplay' || tab === 'emb');
+  if(groupBtn){
+    groupBtn.style.boxShadow = inAirplayGroup ? '0 0 0 1.5px var(--cyan)' : '0 0 0 1px var(--blue-border)';
+    groupBtn.style.opacity   = inAirplayGroup ? '1' : '.7';
+  }
+  const airplayItem = document.getElementById('chartTabAirplay');
+  const embItem      = document.getElementById('chartTabEMB');
+  if(airplayItem) airplayItem.classList.toggle('active', tab === 'airplay');
+  if(embItem)      embItem.classList.toggle('active', tab === 'emb');
   // Masquer le panneau config proxy Deezer si on quitte Deezer France / Futurs Hits (panneau partagé)
   if(tab !== 'dzfr' && tab !== 'fh'){
     const dp = document.getElementById('deezerProxyPanel');
@@ -8172,6 +8256,27 @@ function sortChartByAirplay(key){
 }
 
 function renderChartTable(){
+  const embPanel   = document.getElementById('embChartsPanel');
+  const stdHeader  = document.getElementById('chartStandardHeader');
+  const chartSearchEl = document.getElementById('chartSearch');
+  const chartCountEl  = document.getElementById('chartCount');
+
+  if(activeChartTab === 'emb'){
+    if(stdHeader) stdHeader.style.display = 'none';
+    const em = document.getElementById('chartEmptyMsg'); if(em) em.style.display = 'none';
+    const th = document.getElementById('chartTableHeader'); if(th) th.style.display = 'none';
+    const tb = document.getElementById('chartTableBody'); if(tb) tb.style.display = 'none';
+    if(chartSearchEl) chartSearchEl.style.display = 'none';
+    if(chartCountEl)  chartCountEl.style.display  = 'none';
+    if(embPanel) embPanel.style.display = 'block';
+    embChartsActivate();
+    return;
+  }
+  if(stdHeader) stdHeader.style.display = 'flex';
+  if(embPanel) embPanel.style.display = 'none';
+  if(chartSearchEl) chartSearchEl.style.display = '';
+  if(chartCountEl)  chartCountEl.style.display  = '';
+
   const search = (document.getElementById('chartSearch')?.value || '').toUpperCase();
   const titleEl  = document.getElementById('chartPageTitle');
   const subEl    = document.getElementById('chartPageSub');
@@ -13105,6 +13210,550 @@ function categExportExcel(){
   showToast('Export Excel généré : ' + fileName, 'success');
 }
 
+
+// ══════════════════════════════════════════════════════════════════════════
+// EUROPE MUSIC BENCHMARK — programmation musicale des radios clés
+// (France & Europe), import Muzicast Progcast (nombre de diffusions)
+// ══════════════════════════════════════════════════════════════════════════
+// (EMB est intégré à la page Classements — pas de variable de page dédiée)
+
+/* Radios dans l'ordre exact des colonnes du fichier source (colonnes 10 à 28,
+   bloc DIFFUSIONS). own:true = station Lagardère (mise en valeur cyan). */
+const EMB_STATIONS = [
+  {key:'cherie',       label:'Cherie FM',              own:false},
+  {key:'e2',           label:'Europe 2',               own:true},
+  {key:'fun',          label:'Fun Radio',               own:false},
+  {key:'nost',         label:'Nostalgie',               own:false},
+  {key:'nrj',          label:'NRJ',                      own:false},
+  {key:'rfm',          label:'RFM',                      own:true},
+  {key:'rtl2',         label:'RTL2',                     own:false},
+  {key:'sky',          label:'Skyrock',                  own:false},
+  {key:'e1',           label:'Europe 1',                 own:false},
+  {key:'fi',           label:'France Inter',             own:false},
+  {key:'ici',          label:'ICI',                      own:false},
+  {key:'rtl',          label:'RTL',                      own:false},
+  {key:'deAntenne',    label:'(DE) Antenne Bayern',      own:false},
+  {key:'gbBbc',        label:'(GB) BBC Radio 1',         own:false},
+  {key:'esCadena',     label:'(ES) Cadena 100',          own:false},
+  {key:'gbCapital',    label:'(GB) Capital FM',          own:false},
+  {key:'esFlaixbac',   label:'(ES) Flaixbac',            own:false},
+  {key:'deRtl',        label:'(DE) RTL',                 own:false},
+  {key:'esPrincipales',label:'(ES) 40 principales',      own:false},
+];
+
+const EMB_META_COLS = [
+  {key:'artist',     label:'Artiste'},
+  {key:'title',      label:'Titre'},
+  {key:'genre',      label:'Genre'},
+  {key:'subgenre',   label:'Sous-genre'},
+  {key:'langue',     label:'Langue'},
+  {key:'quota',      label:'Critère quota'},
+  {key:'firstDiff',  label:'1ère diff.'},
+];
+
+const EMB_IDB_INDEX_KEY = 'emb_index';
+function embSnapKey(id){ return 'emb_snap_' + id; }
+
+let embSnapshotsIndex = [];   // [{id, importedAt, fileName, sourceLabel, reportLabel, periodLabel, hoursLabel, daysLabel, dataTypeLabel, rowCount}]
+let embActiveSnapshotId = null;
+let embRows = [];             // lignes du snapshot actif (ou vide)
+let embCompareMode = false;
+let embFilteredSorted = [];
+let embSortKey = 'total';
+let embSortDir = 'desc';
+let embPage = 0;
+const EMB_PAGE_SIZE = 60;
+
+async function embInit(){
+  try{
+    const idx = await idbGet(EMB_IDB_INDEX_KEY);
+    embSnapshotsIndex = Array.isArray(idx) ? idx : [];
+  }catch(e){ embSnapshotsIndex = []; }
+  if(embSnapshotsIndex.length){
+    embActiveSnapshotId = embSnapshotsIndex[embSnapshotsIndex.length - 1].id;
+  }
+}
+embInit();
+
+function embEsc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function embFormatSnapLabel(m){
+  const d = new Date(m.importedAt);
+  const importStr = isNaN(d) ? '' : d.toLocaleDateString('fr-FR');
+  return (m.periodLabel || m.fileName || m.id) + ' — importé le ' + importStr;
+}
+function embMatchKey(r){
+  return (r.artist || '').toUpperCase().trim().replace(/\s+/g, ' ') + '|||' + (r.title || '').toUpperCase().trim().replace(/\s+/g, ' ');
+}
+
+/* ── Intégration dans la page Classements (dropdown "Airplay") ──
+   EMB n'est plus une page top-niveau : c'est un sous-onglet du groupe
+   déroulant Airplay, dans la page Classements (pageCharts). Voir
+   toggleChartAirplayGroup() / switchChartTab('emb') / renderChartTable(). */
+function toggleChartAirplayGroup(e){
+  if(e) e.stopPropagation();
+  const menu = document.getElementById('chartAirplayGroupMenu');
+  const chevron = document.querySelector('#chartAirplayGroup .dec-group-chevron');
+  if(!menu) return;
+  const open = menu.style.display === 'none' || !menu.style.display;
+  menu.style.display = open ? 'flex' : 'none';
+  if(chevron) chevron.style.transform = open ? 'rotate(180deg)' : '';
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('#chartAirplayGroup')){
+    const menu = document.getElementById('chartAirplayGroupMenu');
+    const chevron = document.querySelector('#chartAirplayGroup .dec-group-chevron');
+    if(menu) menu.style.display = 'none';
+    if(chevron) chevron.style.transform = '';
+  }
+});
+
+async function embChartsActivate(){
+  embPopulateSnapshotSelects();
+  if(embActiveSnapshotId && (!embRows || !embRows.length)){
+    embRows = await embLoadSnapshotRows(embActiveSnapshotId);
+  }
+  embPopulateFilterOptions();
+  embBuildMonitoredIndex();
+  embRenderAll();
+}
+
+/* ── Correspondance avec les titres suivis dans FPA (Fit Point / Call Out) ──
+   Réutilise les mêmes utilitaires de normalisation/matching que le reste de
+   l'outil (norm(), similarity(), findInChart()) pour rester cohérent avec
+   l'Airplay, l'Historique et le Radar. */
+let embMonitoredIndex = new Map();      // norm(artist)+'|||'+norm(title) → ligne analysisResult
+let embMonitoredTitleIndex = new Map(); // norm(title) seul → ligne analysisResult (repli)
+
+function embBuildMonitoredIndex(){
+  embMonitoredIndex = new Map();
+  embMonitoredTitleIndex = new Map();
+  if(typeof analysisResult === 'undefined' || !analysisResult || !analysisResult.length) return;
+  analysisResult.forEach(r => {
+    const k = norm(r.artist || '') + '|||' + norm(r.title || '');
+    if(!embMonitoredIndex.has(k)) embMonitoredIndex.set(k, r);
+    const kt = norm(r.title || '');
+    if(kt && !embMonitoredTitleIndex.has(kt)) embMonitoredTitleIndex.set(kt, r);
+  });
+}
+
+/* Coût O(1) — appelable sur l'ensemble du corpus EMB (filtres, tri). */
+function embFindMonitored(row){
+  const k1 = norm(row.artist || '') + '|||' + norm(row.title || '');
+  if(embMonitoredIndex.has(k1)) return embMonitoredIndex.get(k1);
+  const k2 = norm(row.title || '');
+  if(k2 && embMonitoredTitleIndex.has(k2)) return embMonitoredTitleIndex.get(k2);
+  return null;
+}
+
+/* Matching flou (fuzzy) plus coûteux — réservé à l'affichage (page courante
+   uniquement, ~60 lignes), jamais appelé sur tout le corpus EMB. */
+function embFindDigitalSignals(row){
+  const signals = [];
+  if(typeof chartsData !== 'undefined' && chartsData.fr && Object.keys(chartsData.fr).length){
+    const rk = findInChart(chartsData.fr, row.title, row.artist);
+    if(rk) signals.push({icon:'🇫🇷', label:'Shazam FR', rank:rk});
+  }
+  if(typeof chartsData !== 'undefined' && chartsData.ww && Object.keys(chartsData.ww).length){
+    const rk = findInChart(chartsData.ww, row.title, row.artist);
+    if(rk) signals.push({icon:'🌍', label:'Shazam Monde', rank:rk});
+  }
+  if(typeof spotifyData !== 'undefined' && spotifyData && Object.keys(spotifyData).length){
+    const rk = findInChart(spotifyData, row.title, row.artist);
+    if(rk) signals.push({icon:'🟢', label:'Spotify FR', rank:rk});
+  }
+  if(typeof deezerData !== 'undefined' && deezerData && Object.keys(deezerData).length){
+    const rk = findInChart(deezerData, row.title, row.artist);
+    if(rk) signals.push({icon:'🟣', label:'Deezer FR', rank:rk});
+  }
+  return signals;
+}
+
+/* ── Import ── */
+function embOpenImport(){
+  const input = document.getElementById('embFileInput');
+  input.value = '';
+  input.click();
+}
+
+function embHandleFile(evt){
+  const file = evt.target.files && evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const sheetName = wb.SheetNames[0];
+      const ws = wb.Sheets[sheetName];
+      const raw = XLSX.utils.sheet_to_json(ws, {header:1, defval:null});
+      embParseAndStore(raw, file.name);
+    }catch(err){
+      showToast("Erreur de lecture du fichier : " + err.message, 'err');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function embParseAndStore(raw, fileName){
+  if(!raw || raw.length < 10){ showToast('Fichier vide ou format inattendu (en-têtes manquants)', 'err'); return; }
+
+  const sourceLabel   = (raw[0] && raw[0][0]) || '';
+  const reportLabel   = (raw[1] && raw[1][0]) || '';
+  const periodLabel   = (raw[2] && raw[2][0]) || '';
+  const hoursLabel    = (raw[3] && raw[3][0]) || '';
+  const daysLabel     = (raw[4] && raw[4][0]) || '';
+  const dataTypeLabel = (raw[5] && raw[5][0]) || '';
+
+  // Ligne 9 (index 8) = en-têtes de colonnes. Données à partir de la ligne 10
+  // (index 9). Diffusions = colonnes 10 à 28 (index 9 à 27), Total = colonne
+  // 29 (index 28). Audiences (milliers) et Durées (secondes) sont ignorées.
+  const rows = [];
+  for(let i = 9; i < raw.length; i++){
+    const r = raw[i];
+    if(!r || (!r[0] && !r[1])) continue;
+    const st = {};
+    EMB_STATIONS.forEach((s, idx) => {
+      const v = r[9 + idx];
+      st[s.key] = (v === null || v === undefined || v === '') ? 0 : (parseInt(v, 10) || 0);
+    });
+    const totalRaw = r[28];
+    rows.push({
+      artist: r[0] || '',
+      title:  r[1] || '',
+      genre:  r[2] || '',
+      subgenre: r[3] || '',
+      langue: r[4] || '',
+      quota:  r[5] || '',
+      echeanceNP: r[6] || '',
+      sortieComm: r[7] || '',
+      firstDiff: r[8] || '',
+      st,
+      total: (totalRaw === null || totalRaw === undefined || totalRaw === '') ? 0 : (parseInt(totalRaw, 10) || 0)
+    });
+  }
+  if(!rows.length){ showToast('Aucune ligne de données trouvée dans le fichier', 'err'); return; }
+
+  const id = 'emb_' + Date.now();
+  const meta = {
+    id, importedAt: new Date().toISOString(), fileName,
+    sourceLabel, reportLabel, periodLabel, hoursLabel, daysLabel, dataTypeLabel,
+    rowCount: rows.length
+  };
+  try{
+    await idbSet(embSnapKey(id), rows);
+    embSnapshotsIndex.push(meta);
+    await idbSet(EMB_IDB_INDEX_KEY, embSnapshotsIndex);
+  }catch(e){
+    showToast("Erreur d'enregistrement (IndexedDB) : " + e.message, 'err');
+    return;
+  }
+  embActiveSnapshotId = id;
+  embRows = rows;
+  embPage = 0;
+  embCompareMode = false;
+  document.getElementById('embCompareBar').style.display = 'none';
+  const cmpBtn = document.getElementById('embCompareBtn');
+  if(cmpBtn){ cmpBtn.style.borderColor=''; cmpBtn.style.color=''; cmpBtn.style.background=''; }
+  embPopulateSnapshotSelects();
+  embPopulateFilterOptions();
+  embRenderAll();
+  showToast('Import réussi — ' + rows.length.toLocaleString('fr-FR') + ' titres (' + (periodLabel || 'période inconnue') + ')', 'success');
+}
+
+async function embLoadSnapshotRows(id){
+  if(!id) return [];
+  try{
+    const rows = await idbGet(embSnapKey(id));
+    return Array.isArray(rows) ? rows : [];
+  }catch(e){ return []; }
+}
+
+async function embOnSnapshotChange(){
+  const sel = document.getElementById('embSnapshotSelect');
+  embActiveSnapshotId = sel.value || null;
+  embRows = await embLoadSnapshotRows(embActiveSnapshotId);
+  embPage = 0;
+  embPopulateFilterOptions();
+  embRenderAll();
+}
+
+async function embDeleteActiveSnapshot(){
+  if(!embActiveSnapshotId) return;
+  if(!confirm("Supprimer cet import de l'historique ? Cette action est irréversible.")) return;
+  try{ await idbDelete(embSnapKey(embActiveSnapshotId)); }catch(e){}
+  embSnapshotsIndex = embSnapshotsIndex.filter(m => m.id !== embActiveSnapshotId);
+  try{ await idbSet(EMB_IDB_INDEX_KEY, embSnapshotsIndex); }catch(e){}
+  embActiveSnapshotId = embSnapshotsIndex.length ? embSnapshotsIndex[embSnapshotsIndex.length - 1].id : null;
+  embRows = embActiveSnapshotId ? await embLoadSnapshotRows(embActiveSnapshotId) : [];
+  embPage = 0;
+  embPopulateSnapshotSelects();
+  embPopulateFilterOptions();
+  embRenderAll();
+  showToast('Import supprimé de l\u2019historique', 'success');
+}
+
+function embPopulateSnapshotSelects(){
+  const sortedDesc = embSnapshotsIndex.slice().reverse();
+  const sel = document.getElementById('embSnapshotSelect');
+  sel.innerHTML = sortedDesc.length
+    ? sortedDesc.map(m => `<option value="${m.id}" ${m.id === embActiveSnapshotId ? 'selected' : ''}>${embEsc(embFormatSnapLabel(m))}</option>`).join('')
+    : '<option value="">Aucun import</option>';
+
+  const optsCmp = sortedDesc.map(m => `<option value="${m.id}">${embEsc(embFormatSnapLabel(m))}</option>`).join('');
+  const selA = document.getElementById('embCompareASelect');
+  const selB = document.getElementById('embCompareBSelect');
+  selA.innerHTML = optsCmp;
+  selB.innerHTML = optsCmp;
+  if(embSnapshotsIndex.length >= 2){
+    selA.value = embSnapshotsIndex[embSnapshotsIndex.length - 2].id;
+    selB.value = embSnapshotsIndex[embSnapshotsIndex.length - 1].id;
+  }
+}
+
+function embPopulateFilterOptions(){
+  const genres    = [...new Set(embRows.map(r => r.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
+  const subgenres = [...new Set(embRows.map(r => r.subgenre).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
+  const langues   = [...new Set(embRows.map(r => r.langue).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
+  const quotas    = [...new Set(embRows.map(r => r.quota).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
+
+  document.getElementById('embFilterGenre').innerHTML    = '<option value="ALL">Tous genres</option>' + genres.map(g => `<option value="${embEsc(g)}">${embEsc(g)}</option>`).join('');
+  document.getElementById('embFilterSubgenre').innerHTML = '<option value="ALL">Tous sous-genres</option>' + subgenres.map(g => `<option value="${embEsc(g)}">${embEsc(g)}</option>`).join('');
+  document.getElementById('embFilterLangue').innerHTML   = '<option value="ALL">Toutes langues</option>' + langues.map(g => `<option value="${embEsc(g)}">${embEsc(g)}</option>`).join('');
+  document.getElementById('embFilterQuota').innerHTML    = '<option value="ALL">Tous critères quota</option>' + quotas.map(g => `<option value="${embEsc(g)}">${embEsc(g)}</option>`).join('');
+  document.getElementById('embFilterStation').innerHTML  = '<option value="total">Diffusions — Total</option>' + EMB_STATIONS.map(s => `<option value="${s.key}">Diffusions — ${embEsc(s.label)}</option>`).join('');
+}
+
+/* ── Filtres / tri ── */
+function embOnFilterChange(){ embPage = 0; embRenderAll(); }
+
+function embResetFilters(){
+  document.getElementById('embSearch').value = '';
+  document.getElementById('embFilterGenre').value = 'ALL';
+  document.getElementById('embFilterSubgenre').value = 'ALL';
+  document.getElementById('embFilterLangue').value = 'ALL';
+  document.getElementById('embFilterQuota').value = 'ALL';
+  document.getElementById('embFilterStation').value = 'total';
+  document.getElementById('embFilterMinDiff').value = '';
+  const mf = document.getElementById('embFilterMonitored'); if(mf) mf.value = 'ALL';
+  embPage = 0;
+  embRenderAll();
+}
+
+function embApplyFilters(rows){
+  const search = (document.getElementById('embSearch').value || '').trim().toUpperCase();
+  const genre = document.getElementById('embFilterGenre').value;
+  const subgenre = document.getElementById('embFilterSubgenre').value;
+  const langue = document.getElementById('embFilterLangue').value;
+  const quota = document.getElementById('embFilterQuota').value;
+  const stationKey = document.getElementById('embFilterStation').value || 'total';
+  const minDiffRaw = document.getElementById('embFilterMinDiff').value;
+  const minDiff = minDiffRaw !== '' ? (parseInt(minDiffRaw, 10) || 0) : null;
+  const monitoredFilter = document.getElementById('embFilterMonitored')?.value || 'ALL';
+
+  let out = rows;
+  if(search)          out = out.filter(r => (r.artist||'').toUpperCase().includes(search) || (r.title||'').toUpperCase().includes(search));
+  if(genre !== 'ALL')    out = out.filter(r => r.genre === genre);
+  if(subgenre !== 'ALL') out = out.filter(r => r.subgenre === subgenre);
+  if(langue !== 'ALL')   out = out.filter(r => r.langue === langue);
+  if(quota !== 'ALL')    out = out.filter(r => r.quota === quota);
+  if(minDiff !== null)   out = out.filter(r => (stationKey === 'total' ? r.total : (r.st[stationKey]||0)) >= minDiff);
+  if(monitoredFilter === 'YES') out = out.filter(r => !!embFindMonitored(r));
+  if(monitoredFilter === 'NO')  out = out.filter(r => !embFindMonitored(r));
+  return out;
+}
+
+function embApplySort(rows){
+  const dir = embSortDir === 'asc' ? 1 : -1;
+  const key = embSortKey;
+  const textKeys = ['artist','title','genre','subgenre','langue','quota'];
+  return rows.slice().sort((a, b) => {
+    if(textKeys.includes(key)){
+      return dir * (a[key] || '').toString().localeCompare((b[key] || '').toString(), 'fr');
+    }
+    const va = key === 'total' ? (a.total || 0) : (a.st[key] || 0);
+    const vb = key === 'total' ? (b.total || 0) : (b.st[key] || 0);
+    return dir * (va - vb);
+  });
+}
+
+function embSortBy(key){
+  if(embSortKey === key){ embSortDir = embSortDir === 'asc' ? 'desc' : 'asc'; }
+  else { embSortKey = key; embSortDir = 'desc'; }
+  embPage = 0;
+  embRenderAll();
+}
+
+/* ── Comparaison de deux imports ── */
+function embToggleCompare(){
+  embCompareMode = !embCompareMode;
+  document.getElementById('embCompareBar').style.display = embCompareMode ? 'flex' : 'none';
+  const btn = document.getElementById('embCompareBtn');
+  btn.style.borderColor = embCompareMode ? 'var(--cyan)' : '';
+  btn.style.color       = embCompareMode ? 'var(--navy)' : '';
+  btn.style.background  = embCompareMode ? 'var(--cyan-light)' : '';
+  embPage = 0;
+  embRenderAll();
+}
+function embOnCompareChange(){ embPage = 0; embRenderAll(); }
+
+async function embBuildCompareRows(){
+  const idA = document.getElementById('embCompareASelect').value;
+  const idB = document.getElementById('embCompareBSelect').value;
+  if(!idA || !idB) return [];
+  const [rowsA, rowsB] = await Promise.all([embLoadSnapshotRows(idA), embLoadSnapshotRows(idB)]);
+  const mapA = new Map(rowsA.map(r => [embMatchKey(r), r]));
+  const mapB = new Map(rowsB.map(r => [embMatchKey(r), r]));
+  const keys = new Set([...mapA.keys(), ...mapB.keys()]);
+  const out = [];
+  keys.forEach(k => {
+    const a = mapA.get(k), b = mapB.get(k);
+    const base = b || a;
+    const st = {};
+    let totalDelta = 0;
+    EMB_STATIONS.forEach(s => {
+      const va = a ? (a.st[s.key] || 0) : 0;
+      const vb = b ? (b.st[s.key] || 0) : 0;
+      const d = vb - va;
+      st[s.key] = d;
+      totalDelta += d;
+    });
+    out.push({
+      artist: base.artist, title: base.title, genre: base.genre, subgenre: base.subgenre,
+      langue: base.langue, quota: base.quota, echeanceNP: base.echeanceNP, sortieComm: base.sortieComm, firstDiff: base.firstDiff,
+      st, total: totalDelta
+    });
+  });
+  return out;
+}
+
+/* ── Rendu ── */
+function embBuildSourceMetaHtml(){
+  const m = embSnapshotsIndex.find(s => s.id === embActiveSnapshotId);
+  if(!m) return '';
+  const bits = [];
+  if(m.sourceLabel) bits.push(embEsc(m.sourceLabel));
+  if(m.periodLabel) bits.push(embEsc(m.periodLabel));
+  if(m.hoursLabel)  bits.push(embEsc(m.hoursLabel));
+  if(m.daysLabel)   bits.push(embEsc(m.daysLabel));
+  bits.push(m.rowCount.toLocaleString('fr-FR') + ' titres importés');
+  const d = new Date(m.importedAt);
+  if(!isNaN(d)) bits.push('import du ' + d.toLocaleDateString('fr-FR'));
+  return bits.join(' · ');
+}
+
+async function embRenderAll(){
+  document.getElementById('embSourceMeta').innerHTML = embCompareMode
+    ? 'Mode comparaison — écarts de diffusions entre les deux imports sélectionnés ci-dessus'
+    : embBuildSourceMetaHtml();
+
+  let baseRows;
+  if(embCompareMode){
+    baseRows = await embBuildCompareRows();
+  } else {
+    baseRows = embRows;
+  }
+
+  const emptyEl = document.getElementById('embEmptyState');
+  const wrapEl  = document.getElementById('embTableWrap');
+  if(!baseRows || !baseRows.length){
+    emptyEl.style.display = 'block';
+    wrapEl.style.display = 'none';
+    document.getElementById('embResultCount').textContent = '';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  wrapEl.style.display = 'block';
+
+  const filtered = embApplyFilters(baseRows);
+  embFilteredSorted = embApplySort(filtered);
+
+  document.getElementById('embResultCount').textContent =
+    embFilteredSorted.length.toLocaleString('fr-FR') + ' titre' + (embFilteredSorted.length > 1 ? 's' : '');
+
+  const maxPage = Math.max(0, Math.ceil(embFilteredSorted.length / EMB_PAGE_SIZE) - 1);
+  if(embPage > maxPage) embPage = maxPage;
+  const start = embPage * EMB_PAGE_SIZE;
+  const pageRows = embFilteredSorted.slice(start, start + EMB_PAGE_SIZE);
+
+  embRenderTable(pageRows, embCompareMode);
+  document.getElementById('embPageLabel').textContent = 'Page ' + (embPage + 1) + ' / ' + (maxPage + 1);
+}
+
+function embRenderMonitoredCell(r){
+  const m = embFindMonitored(r);
+  if(!m){
+    return '<td style="padding:7px 10px;font-size:11px;color:var(--muted);white-space:nowrap">—</td>';
+  }
+  const q = (typeof QUAD !== 'undefined') ? QUAD[m.q] : null;
+  const icon  = q ? q.icon : '';
+  const color = q ? q.text : 'var(--navy)';
+  const bg    = q ? q.badgeBg : 'var(--bg)';
+  const fitTxt = (m.fit !== undefined && m.fit !== null) ? m.fit.toFixed(1) : '—';
+  const qLabel = q ? q.label : '';
+  return `<td style="padding:7px 10px;white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:5px;background:${bg};color:${color};font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px" title="${embEsc(qLabel)} — Fit Score ${fitTxt}">${icon} ${fitTxt}</span></td>`;
+}
+
+function embRenderDigitalCell(r){
+  const signals = embFindDigitalSignals(r);
+  if(!signals.length){
+    return '<td style="padding:7px 10px;font-size:11px;color:var(--muted);white-space:nowrap">—</td>';
+  }
+  const html = signals.map(s => `<span title="${embEsc(s.label)} — rang ${s.rank}" style="margin-right:6px;white-space:nowrap">${s.icon}<span style="font-size:10px;color:var(--muted)">${s.rank}</span></span>`).join('');
+  return `<td style="padding:7px 10px;font-size:11px;white-space:nowrap">${html}</td>`;
+}
+
+function embRenderTable(rows, isDelta){
+  let thead = '<thead><tr>';
+  EMB_META_COLS.forEach(c => {
+    const active = embSortKey === c.key;
+    thead += `<th onclick="embSortBy('${c.key}')" style="position:sticky;top:0;background:var(--bg);cursor:pointer;padding:8px 10px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:${active ? 'var(--navy)' : 'var(--text2)'};white-space:nowrap;border-bottom:1.5px solid var(--border);text-align:left">${embEsc(c.label)}${active ? (embSortDir === 'asc' ? ' ▲' : ' ▼') : ''}</th>`;
+  });
+  thead += `<th style="position:sticky;top:0;background:var(--purple-bg,#F3EEFF);padding:8px 10px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--purple-text,#5B21B6);white-space:nowrap;border-bottom:1.5px solid var(--border);text-align:left" title="Correspondance avec le titre dans l'analyse Fit Point / Call Out en cours dans FPA">Suivi FPA</th>`;
+  thead += `<th style="position:sticky;top:0;background:var(--bg);padding:8px 10px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);white-space:nowrap;border-bottom:1.5px solid var(--border);text-align:left" title="Présence dans les classements digitaux chargés (Shazam FR/Monde, Spotify France, Deezer France)">Digital</th>`;
+  EMB_STATIONS.forEach(s => {
+    const active = embSortKey === s.key;
+    thead += `<th onclick="embSortBy('${s.key}')" style="position:sticky;top:0;background:${s.own ? 'var(--cyan-light)' : 'var(--bg)'};cursor:pointer;padding:8px 8px;font-size:10.5px;font-weight:800;color:${active ? 'var(--navy)' : (s.own ? 'var(--navy)' : 'var(--text2)')};white-space:nowrap;border-bottom:1.5px solid var(--border);text-align:right">${embEsc(s.label)}${active ? (embSortDir === 'asc' ? ' ▲' : ' ▼') : ''}</th>`;
+  });
+  const totalActive = embSortKey === 'total';
+  thead += `<th onclick="embSortBy('total')" style="position:sticky;top:0;background:var(--navy);cursor:pointer;padding:8px 10px;font-size:10.5px;font-weight:800;color:#fff;white-space:nowrap;border-bottom:1.5px solid var(--border);text-align:right">${isDelta ? 'Δ Total' : 'Total'}${totalActive ? (embSortDir === 'asc' ? ' ▲' : ' ▼') : ''}</th>`;
+  thead += '</tr></thead>';
+
+  let tbody = '<tbody>';
+  rows.forEach(r => {
+    tbody += '<tr style="border-bottom:1px solid var(--border)">';
+    tbody += `<td style="padding:7px 10px;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap">${embEsc(r.artist)}</td>`;
+    tbody += `<td style="padding:7px 10px;font-size:12px;color:var(--text2);white-space:nowrap">${embEsc(r.title)}</td>`;
+    tbody += `<td style="padding:7px 10px;font-size:11.5px;color:var(--muted);white-space:nowrap">${embEsc(r.genre)}</td>`;
+    tbody += `<td style="padding:7px 10px;font-size:11.5px;color:var(--muted);white-space:nowrap">${embEsc(r.subgenre)}</td>`;
+    tbody += `<td style="padding:7px 10px;font-size:11.5px;color:var(--muted);white-space:nowrap">${embEsc(r.langue)}</td>`;
+    tbody += `<td style="padding:7px 10px;font-size:11.5px;color:var(--muted);white-space:nowrap">${embEsc(r.quota)}</td>`;
+    tbody += `<td style="padding:7px 10px;font-size:11.5px;color:var(--muted);white-space:nowrap">${embEsc(r.firstDiff)}</td>`;
+    tbody += embRenderMonitoredCell(r);
+    tbody += embRenderDigitalCell(r);
+    EMB_STATIONS.forEach(s => {
+      const v = r.st[s.key] || 0;
+      let cellColor = s.own ? 'var(--navy)' : 'var(--text2)';
+      if(isDelta) cellColor = v > 0 ? '#0DA76B' : (v < 0 ? '#CC2222' : 'var(--muted)');
+      const bg = s.own ? 'rgba(0,180,216,.06)' : 'transparent';
+      const display = isDelta && v > 0 ? ('+' + v) : v;
+      tbody += `<td style="padding:7px 8px;font-size:12px;text-align:right;font-weight:${s.own ? '700' : '500'};color:${cellColor};background:${bg}">${display}</td>`;
+    });
+    const totalDisplay = isDelta && r.total > 0 ? ('+' + r.total) : r.total;
+    tbody += `<td style="padding:7px 10px;font-size:12.5px;text-align:right;font-weight:800;color:var(--navy)">${totalDisplay}</td>`;
+    tbody += '</tr>';
+  });
+  tbody += '</tbody>';
+
+  document.getElementById('embTableBody').innerHTML = `<table style="border-collapse:collapse;width:100%;min-width:2150px">${thead}${tbody}</table>`;
+}
+
+function embPrevPage(){ if(embPage > 0){ embPage--; embRenderAll(); } }
+function embNextPage(){
+  const maxPage = Math.max(0, Math.ceil(embFilteredSorted.length / EMB_PAGE_SIZE) - 1);
+  if(embPage < maxPage){ embPage++; embRenderAll(); }
+}
+
 // ══════════════════════════════════════════════════════════════════════════
 // SCORE DE POLARISATION — titres qui clivent vs consensuels
 // ══════════════════════════════════════════════════════════════════════════
@@ -15950,7 +16599,8 @@ initPlatformLogosInTabs();
 
   /* ── Classements : 13 onglets à plat ── */
   const CHART_TABS = [
-    ['airplay','📻 Airplay'], ['shzfr','🇫🇷 Shazam France'], ['shzww','🌍 Shazam Monde'],
+    ['airplay','📻 Airplay'], ['emb','🌍 Europe Music Benchmark'],
+    ['shzfr','🇫🇷 Shazam France'], ['shzww','🌍 Shazam Monde'],
     ['spyfr','🟢 Spotify France'], ['dzfr','🟣 Deezer France'], ['fh','🟣 Futurs Hits'],
     ['amus','🍎 Apple Music US'], ['amfr','🍎🇫🇷 Apple Music FR'],
     ['itus','🛒 iTunes US'], ['itfr','🛒🇫🇷 iTunes FR'],
