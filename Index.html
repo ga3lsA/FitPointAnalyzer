@@ -125,7 +125,17 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
      un menu déroulant plein largeur, au lieu d'un scroll horizontal caché. */
   #chartTabsBar > button,
   #chartTabsBar > div[style*="width:1px;height:26px"],
-  #chartAirplayGroup{display:none!important}
+  #chartAirplayGroup,
+  #chartIntlGroup{display:none!important}
+
+  /* Recherche globale (Classements) : le dropdown de résultats doit rester
+     dans l'écran sur mobile — pas de largeur fixe ni d'ancrage à droite. */
+  #chartSearch{width:150px!important}
+  #chartGlobalSearchResults{
+    position:fixed!important;
+    left:8px!important;right:8px!important;top:auto!important;
+    width:auto!important;max-width:none!important;
+  }
   #chartTabsMobileWrap{display:block!important}
 
   #decisionSubTabs{display:none!important}
@@ -1001,7 +1011,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
 
       <!-- Note explicative -->
       <div id="infoRadar" style="display:none;padding:14px 18px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;margin-bottom:18px;font-size:12px;color:var(--text2);line-height:1.7">
-        <div style="margin-bottom:6px"><strong style="color:var(--navy)">Quelle donnée ?</strong> Le Radar compare, pour chaque titre du fichier chargé, son classement actuel (Shazam France, Spotify France, Classement Indés Radios, Classement Général Muzicast, et une radio concurrente suivie au choix) avec son classement lors de la dernière semaine sauvegardée sur Drive (Classements → Historique Drive).</div>
+        <div style="margin-bottom:6px"><strong style="color:var(--navy)">Quelle donnée ?</strong> Le Radar compare, pour chaque titre du fichier chargé, son classement actuel (Shazam France, Spotify France, Spotify UK, Spotify Pays-Bas, Classement Indés Radios, Classement Général Muzicast, et une radio concurrente suivie au choix) avec son classement lors de la dernière semaine sauvegardée sur Drive (Classements → Historique Drive). Spotify UK et Pays-Bas (source kworb.net) servent de signal de progression internationale précoce — un titre qui accélère sur ces marchés avant la France mérite souvent d'être surveillé de près.</div>
         <div style="margin-bottom:6px"><strong style="color:var(--navy)">Méthode</strong> — Un « gain » correspond à une progression du classement (rang qui diminue = position qui monte). Le classement de la radio concurrente suivie est dérivé du volume de passages de la semaine (tri décroissant), les Classements Indés Radios et Général sont repris tels quels de l'import airplay.</div>
         <div><strong style="color:var(--navy)">À quoi ça sert ?</strong> Repérer immédiatement les titres qui accélèrent simultanément sur plusieurs fronts (streams, découverte, concurrence) — souvent le signal le plus fiable qu'un titre mérite plus de rotation avant que la concurrence ne le programme.</div>
       </div>
@@ -1016,6 +1026,12 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
         </label>
         <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--text2)">🟢 Spotify ≥
           <input id="radarThreshSpy" type="number" value="5" min="1" max="200" style="width:52px;font-size:12px;padding:5px 7px;border-radius:6px" onchange="renderRadarPage()">
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--text2)" title="Source : kworb.net, classement Spotify UK">🇬🇧 Spotify UK ≥
+          <input id="radarThreshSpyGB" type="number" value="10" min="1" max="200" style="width:52px;font-size:12px;padding:5px 7px;border-radius:6px" onchange="renderRadarPage()">
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--text2)" title="Source : kworb.net, classement Spotify Pays-Bas">🇳🇱 Spotify NL ≥
+          <input id="radarThreshSpyNL" type="number" value="10" min="1" max="200" style="width:52px;font-size:12px;padding:5px 7px;border-radius:6px" onchange="renderRadarPage()">
         </label>
         <label style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--text2)">📻 Indés ≥
           <input id="radarThreshInd" type="number" value="5" min="1" max="200" style="width:52px;font-size:12px;padding:5px 7px;border-radius:6px" onchange="renderRadarPage()">
@@ -1837,6 +1853,28 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
       </div>
     </div>
     <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
+    <div class="dec-group" id="chartIntlGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border);opacity:.7">
+      <button id="chartGroupBtnIntl" onclick="switchChartTab('kwfr')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
+        🌍 International
+      </button>
+      <button id="chartGroupChevronBtnIntl" onclick="toggleChartIntlGroup(event)" title="Classements internationaux (source kworb.net)" style="height:34px;width:26px;border:none;border-left:1px solid rgba(11,29,58,.12);background:transparent;color:var(--navy);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:0 8px 8px 0">
+        <svg class="dec-group-chevron" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div id="chartIntlGroupMenu" class="dec-group-menu" style="display:none;top:40px;left:0">
+        <button id="chartTabIntl_kwfr" onclick="switchChartTab('kwfr')" class="dec-subtab-item"><span class="dec-subtab-ic">🇫🇷</span>Spotify France</button>
+        <button id="chartTabIntl_kwus" onclick="switchChartTab('kwus')" class="dec-subtab-item"><span class="dec-subtab-ic">🇺🇸</span>Spotify US</button>
+        <button id="chartTabIntl_kwgb" onclick="switchChartTab('kwgb')" class="dec-subtab-item"><span class="dec-subtab-ic">🇬🇧</span>Spotify UK</button>
+        <button id="chartTabIntl_kwde" onclick="switchChartTab('kwde')" class="dec-subtab-item"><span class="dec-subtab-ic">🇩🇪</span>Spotify Allemagne</button>
+        <button id="chartTabIntl_kwes" onclick="switchChartTab('kwes')" class="dec-subtab-item"><span class="dec-subtab-ic">🇪🇸</span>Spotify Espagne</button>
+        <button id="chartTabIntl_kwit" onclick="switchChartTab('kwit')" class="dec-subtab-item"><span class="dec-subtab-ic">🇮🇹</span>Spotify Italie</button>
+        <button id="chartTabIntl_kwbe" onclick="switchChartTab('kwbe')" class="dec-subtab-item"><span class="dec-subtab-ic">🇧🇪</span>Spotify Belgique</button>
+        <button id="chartTabIntl_kwse" onclick="switchChartTab('kwse')" class="dec-subtab-item"><span class="dec-subtab-ic">🇸🇪</span>Spotify Suède</button>
+        <button id="chartTabIntl_kwnl" onclick="switchChartTab('kwnl')" class="dec-subtab-item"><span class="dec-subtab-ic">🇳🇱</span>Spotify Pays-Bas</button>
+        <button id="chartTabIntl_kwradio" onclick="switchChartTab('kwradio')" class="dec-subtab-item"><span class="dec-subtab-ic">🏆</span>Radio Billboard (US)</button>
+        <button id="chartTabIntl_kwtop" onclick="switchChartTab('kwtop')" class="dec-subtab-item"><span class="dec-subtab-ic">🌍</span>Top Artistes (Monde)</button>
+      </div>
+    </div>
+    <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
     <button id="chartTabShzFR" onclick="switchChartTab('shzfr')" style="height:44px;padding:0 9px;font-size:11px;font-weight:600;border:none;border-bottom:2.5px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
       🇫🇷 Shazam France
     </button>
@@ -1861,9 +1899,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     <button id="chartTabAmFR" onclick="switchChartTab('amfr')" style="height:44px;padding:0 9px;font-size:11px;font-weight:700;border:none;border-bottom:2.5px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
       🍎🇫🇷 Apple Music FR
     </button>
-    <button id="chartTabItUS" onclick="switchChartTab('itus')" style="height:44px;padding:0 9px;font-size:11px;font-weight:700;border:none;border-bottom:2.5px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
-      🛒 iTunes US
-    </button>
+    <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
     <button id="chartTabItFR" onclick="switchChartTab('itfr')" style="height:44px;padding:0 9px;font-size:11px;font-weight:700;border:none;border-bottom:2.5px solid transparent;background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
       🛒🇫🇷 iTunes FR
     </button>
@@ -1877,7 +1913,13 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
       ▶️ YouTube
     </button>
     <div style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0">
-      <input id="chartSearch" placeholder="Rechercher…" oninput="renderChartTable()" style="font-size:12px;padding:6px 10px;border-radius:7px;width:130px">
+      <div style="position:relative">
+        <input id="chartSearch" placeholder="Rechercher (tous classements)…" autocomplete="off"
+          oninput="renderChartTable(); renderChartGlobalSearch()"
+          onfocus="renderChartGlobalSearch()"
+          style="font-size:12px;padding:6px 10px;border-radius:7px;width:210px">
+        <div id="chartGlobalSearchResults" style="display:none;position:absolute;top:36px;right:0;width:340px;max-height:420px;overflow-y:auto;background:var(--white);border:1.5px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:200"></div>
+      </div>
       <span id="chartCount" style="font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap"></span>
     </div>
   </div>
@@ -1913,6 +1955,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
 
     <!-- Panneau config proxy YouTube (masqué par défaut, visible uniquement onglet YouTube) -->
     <div id="youtubeProxyPanel" style="display:none;margin-bottom:18px"></div>
+    <div id="kworbProxyPanel" style="display:none;margin-bottom:18px"></div>
 
     <!-- Message si classement vide -->
     <div id="chartEmptyMsg" style="display:none;text-align:center;padding:60px 20px;color:var(--muted)">
@@ -2572,7 +2615,6 @@ function initPlatformLogosInTabs(){
     ['chartTabFH',     LOGO_DEEZER,     'Deezer',      16, 'Futurs Hits'],
     ['chartTabAmUS',   LOGO_APPLEMUSIC, 'Apple Music', 11, 'US'],
     ['chartTabAmFR',   LOGO_APPLEMUSIC, 'Apple Music', 11, 'FR'],
-    ['chartTabItUS',   LOGO_ITUNES,     'iTunes',      11, 'US'],
     ['chartTabItFR',   LOGO_ITUNES,     'iTunes',      11, 'FR'],
     ['chartTabBbUS',   LOGO_BILLBOARD,  'Billboard',   16, 'US'],
     ['chartTabBbG200', LOGO_BILLBOARD,  'Billboard',   16, 'Global'],
@@ -4381,6 +4423,368 @@ async function loadBillboardGlobalChart(){
   if(activeChartTab === 'bbg200') renderChartTable();
 }
 
+// ── KWORB.NET — Onglet "International" (Classements) ───────────────────────
+// kworb.net republie en HTML public les classements Spotify officiels par
+// pays (aucun mur d'authentification, contrairement à l'API interne
+// charts.spotify.com utilisée pour Spotify France qui renvoie 401/403 en
+// accès serveur — voir commentaire sur spotifyData). Récupéré via la même
+// cascade de proxies CORS génériques que Billboard Global 200
+// (fetchDataViaProxy) : pas besoin d'un proxy Apps Script dédié.
+// IMPORTANT : n'affecte en rien l'import CSV Spotify France existant
+// (onglet 'spyfr', conservé tel quel par sécurité).
+const KWORB_COUNTRIES = {
+  fr: { label:'Spotify France',    flag:'🇫🇷', url:'https://kworb.net/spotify/country/fr_daily.html' },
+  us: { label:'Spotify US',        flag:'🇺🇸', url:'https://kworb.net/spotify/country/us_daily.html' },
+  gb: { label:'Spotify UK',        flag:'🇬🇧', url:'https://kworb.net/spotify/country/gb_daily.html' },
+  de: { label:'Spotify Allemagne', flag:'🇩🇪', url:'https://kworb.net/spotify/country/de_daily.html' },
+  es: { label:'Spotify Espagne',   flag:'🇪🇸', url:'https://kworb.net/spotify/country/es_daily.html' },
+  it: { label:'Spotify Italie',    flag:'🇮🇹', url:'https://kworb.net/spotify/country/it_daily.html' },
+  be: { label:'Spotify Belgique',  flag:'🇧🇪', url:'https://kworb.net/spotify/country/be_daily.html' },
+  se: { label:'Spotify Suède',     flag:'🇸🇪', url:'https://kworb.net/spotify/country/se_daily.html' },
+  nl: { label:'Spotify Pays-Bas',  flag:'🇳🇱', url:'https://kworb.net/spotify/country/nl_daily.html' },
+};
+const KWORB_COUNTRY_TABS = Object.keys(KWORB_COUNTRIES).map(cc => 'kw' + cc); // ['kwfr','kwus','kwgb','kwde','kwes','kwit']
+const KWORB_RADIO_URL     = 'https://kworb.net/radio/';
+const KWORB_LISTENERS_URL = 'https://kworb.net/spotify/listeners.html';
+
+let kworbSpotifyState = {};
+Object.keys(KWORB_COUNTRIES).forEach(cc => { kworbSpotifyState[cc] = {data:{}, loaded:false, loading:false, dateUsed:null}; });
+
+let kworbRadioData = {}, kworbRadioLoaded = false, kworbRadioLoading = false, kworbRadioDateUsed = null;
+let kworbListenersData = {}, kworbListenersLoaded = false, kworbListenersLoading = false, kworbListenersDateUsed = null;
+
+/** Parse la table HTML d'une page kworb.net via le DOM du navigateur (plus robuste
+ *  qu'une regex — la mise en page kworb est un <table> standard). */
+function parseKworbTableRows(html, minCols){
+  try{
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const table = doc.querySelector('table');
+    if(!table) return null;
+    const rows = Array.from(table.querySelectorAll('tr')).filter(tr => tr.querySelectorAll('td').length >= minCols);
+    return rows.length ? rows : null;
+  }catch(e){ return null; }
+}
+
+/** kworb affiche "Artiste - Titre (w/ Featuring)" dans une seule cellule. */
+function splitKworbArtistTitle(cellText){
+  const raw = (cellText||'').replace(/\s+/g,' ').trim();
+  const dashIdx = raw.indexOf(' - ');
+  if(dashIdx > -1) return { artist: raw.slice(0,dashIdx).trim(), title: raw.slice(dashIdx+3).trim() };
+  return { artist:'', title: raw };
+}
+
+/** Classement Spotify quotidien par pays — colonnes kworb :
+ *  Pos | P+ | Artist and Title | Days | Pk | (x?) | Streams | Streams+ | 7Day | 7Day+ | Total */
+function parseKworbSpotifyDaily(html){
+  const rows = parseKworbTableRows(html, 7);
+  if(!rows || rows.length < 5) return null;
+  const chart = {};
+  rows.forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    const rank = parseInt((tds[0].textContent||'').trim());
+    if(!rank) return;
+    const trend = (tds[1].textContent||'').trim();
+    const {artist, title} = splitKworbArtistTitle(tds[2].textContent);
+    if(!title) return;
+    const days    = parseInt((tds[3].textContent||'').trim()) || null;
+    const peak    = parseInt((tds[4].textContent||'').trim()) || null;
+    const streams = parseInt((tds[6].textContent||'').replace(/[^0-9]/g,'')) || null;
+    let prev = null;
+    if(/^[+-]\d+$/.test(trend)) prev = rank + parseInt(trend);
+    else if(trend === '=') prev = rank;
+    chart[rank] = { a:artist, t:title, streams, peak, days, prev };
+  });
+  return Object.keys(chart).length ? chart : null;
+}
+
+/** Billboard Radio Songs (Airplay US) — même forme Artist/Title en colonne 3. */
+function parseKworbRadio(html){
+  const rows = parseKworbTableRows(html, 6);
+  if(!rows || rows.length < 5) return null;
+  const chart = {};
+  rows.forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    const rank = parseInt((tds[0].textContent||'').trim());
+    if(!rank) return;
+    const {artist, title} = splitKworbArtistTitle(tds[2].textContent);
+    if(!title) return;
+    chart[rank] = { a:artist, t:title };
+  });
+  return Object.keys(chart).length ? chart : null;
+}
+
+/** Top artistes Spotify par auditeurs mensuels — classement MONDIAL (kworb ne
+ *  propose pas de déclinaison par pays pour cette page, contrairement aux
+ *  classements de titres). Colonnes : # | Artist | Listeners | Daily +/- | Peak | PkListeners */
+function parseKworbListeners(html){
+  const rows = parseKworbTableRows(html, 3);
+  if(!rows || rows.length < 5) return null;
+  const chart = {};
+  rows.forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    const rank = parseInt((tds[0].textContent||'').trim());
+    if(!rank) return;
+    const artist = (tds[1].textContent||'').trim();
+    if(!artist) return;
+    chart[rank] = { a: artist, t: '' };
+  });
+  return Object.keys(chart).length ? chart : null;
+}
+
+/** Rang E2 (airplay) pré-calculé une seule fois, réutilisé par tous les
+ *  classements kworb (évite de dupliquer la boucle de tri par titre). */
+function computeE2RankMap(){
+  const map = {};
+  if(!airplayLoaded) return map;
+  const sorted = Object.entries(airplayData)
+    .filter(([k]) => k.includes('|||'))
+    .map(([k,v]) => ({key:k, e2val: (v.e2!==null && v.e2!==undefined && v.e2!=='') ? parseInt(v.e2)||0 : 0}))
+    .filter(x => x.e2val > 0)
+    .sort((a,b) => b.e2val - a.e2val);
+  sorted.forEach((x,i) => { map[x.key] = i+1; });
+  return map;
+}
+
+// ── Proxy Apps Script pour kworb.net — PRIORITAIRE sur les proxies publics ──
+// Les proxies CORS publics génériques (allorigins, corsproxy.io, thingproxy,
+// isomorphic-git…) sont peu fiables en usage réel (rate-limit, blocage,
+// panne, DNS) — voir le même constat pour Deezer/Apple Music. Un proxy perso
+// (Google Apps Script) est nécessaire pour un usage quotidien fiable.
+// Contrairement à Deezer/Apple Music, kworb n'a pas d'API dédiée à imiter :
+// le proxy est ici GÉNÉRIQUE, il prend une URL cible en paramètre et renvoie
+// son contenu HTML brut — réutilisable pour les 6 pays Spotify + Radio
+// Billboard + Top Artistes en un seul déploiement Apps Script.
+let KWORB_APPS_SCRIPT_PROXY_URL = localStorage.getItem('fpa_kworb_proxy_url') || '';
+
+let _kworbCbId = 0;
+function fetchKworbViaAppsScript(targetUrl, timeoutMs = 8000){
+  return new Promise((resolve) => {
+    // Garde-fou HTTPS : voir le commentaire équivalent dans fetchDeezerViaAppsScript.
+    if(!/^https:\/\//i.test(KWORB_APPS_SCRIPT_PROXY_URL || '')){ resolve(null); return; }
+
+    const cbName = '__fpaKW_' + (++_kworbCbId);
+    const cleanup = () => {
+      delete window[cbName];
+      const s = document.getElementById('__jsonp_' + cbName);
+      if(s) s.remove();
+    };
+    const timer = setTimeout(() => { cleanup(); resolve(null); }, timeoutMs);
+
+    window[cbName] = (html) => {
+      clearTimeout(timer);
+      cleanup();
+      if(!html || html.error){ resolve(null); return; }
+      resolve(html);
+    };
+
+    const url = KWORB_APPS_SCRIPT_PROXY_URL
+      + '?callback=' + cbName
+      + '&url=' + encodeURIComponent(targetUrl);
+
+    const script = document.createElement('script');
+    script.id  = '__jsonp_' + cbName;
+    script.src = url;
+    script.onerror = () => { clearTimeout(timer); cleanup(); resolve(null); };
+    document.head.appendChild(script);
+  });
+}
+
+/** Fetch d'une page kworb.net : proxy perso en priorité (fiable, illimité),
+ *  repli sur la cascade de proxies CORS publics si non configuré ou en échec. */
+async function fetchKworbPage(targetUrl, parserFn){
+  const html = await fetchKworbViaAppsScript(targetUrl);
+  if(html){
+    const parsed = parserFn(html);
+    if(parsed) return parsed;
+  }
+  return fetchDataViaProxy(targetUrl, parserFn);
+}
+
+/* ── Panneau de configuration du proxy kworb.net (URL Apps Script) ── */
+function toggleKworbProxyPanel(){
+  const panel = document.getElementById('kworbProxyPanel');
+  if(!panel) return;
+  const open = panel.style.display === 'none' || panel.style.display === '';
+  panel.style.display = open ? 'block' : 'none';
+  if(open) renderKworbProxyPanel();
+}
+
+function renderKworbProxyPanel(msg){
+  const panel = document.getElementById('kworbProxyPanel');
+  if(!panel) return;
+  panel.innerHTML = `
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:14px 18px">
+      <div style="font-size:11px;font-weight:800;color:var(--navy);margin-bottom:6px">⚙️ Proxy kworb.net — URL Web App Google Apps Script</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="kworbProxyUrlInput" type="text" value="${escHtml(KWORB_APPS_SCRIPT_PROXY_URL)}"
+          placeholder="https://script.google.com/macros/s/XXXX/exec"
+          style="flex:1;font-size:11px;padding:7px 10px;border-radius:7px;border:1.5px solid var(--border);font-family:monospace"
+          oninput="KWORB_APPS_SCRIPT_PROXY_URL=this.value;localStorage.setItem('fpa_kworb_proxy_url',this.value)">
+        <button id="kworbProxyTestBtn" onclick="(async()=>{
+          const btn=document.getElementById('kworbProxyTestBtn'); btn.disabled=true; btn.textContent='⏳ Test…';
+          const r = await fetchKworbViaAppsScript('https://kworb.net/spotify/country/fr_daily.html');
+          btn.disabled=false; btn.textContent='Tester';
+          showToast(r ? '✓ Connexion OK (' + r.length + ' caractères reçus)' : 'Connexion échouée — vérifiez l\\'URL et le déploiement', r?'success':'err');
+        })()" style="font-size:11px;padding:7px 12px;border-radius:7px;background:#FFF4E0;border:1.5px solid #FFD9A0;color:#B36B00;cursor:pointer;font-weight:700;white-space:nowrap">Tester</button>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-top:6px">
+        Fichier <strong>Code_gs_Proxy_Kworb.gs</strong> à déployer sur <a href="https://script.google.com" target="_blank" style="color:var(--cyan)">script.google.com</a>
+        (Déployer → Application Web → Exécuter en tant que Moi → Accès : Tout le monde). URL mémorisée dans le navigateur.
+        Ce proxy est générique (une seule URL cible en paramètre) : partagé par les 6 pays Spotify, Radio Billboard et Top Artistes.
+        Champ vide = proxies publics de secours uniquement (peu fiables).
+      </div>
+      ${msg ? `<div style="font-size:11px;margin-top:8px;color:var(--text2)">${escHtml(msg)}</div>` : ''}
+    </div>`;
+}
+
+async function loadKworbSpotify(cc){
+  const st = kworbSpotifyState[cc];
+  const def = KWORB_COUNTRIES[cc];
+  if(!st || !def || st.loading) return;
+  st.loading = true;
+  const tabId = 'kw' + cc;
+  if(document.getElementById('chartPageSub') && activeChartTab === tabId){
+    document.getElementById('chartPageSub').textContent = '⏳ Connexion à ' + def.label + ' (kworb.net)…';
+  }
+  const chart = await fetchKworbPage(def.url, parseKworbSpotifyDaily);
+  if(chart){
+    st.data = chart;
+    st.loaded = true;
+    st.dateUsed = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+    if(activeChartTab === tabId) showToast('Classement ' + def.label + ' chargé ✓ (kworb.net)','success');
+  } else if(activeChartTab === tabId){
+    showToast('Connexion à kworb.net impossible pour le moment — réessayez plus tard','err');
+  }
+  st.loading = false;
+  if(activeChartTab === tabId) renderChartTable();
+}
+
+async function loadKworbRadio(){
+  if(kworbRadioLoading) return;
+  kworbRadioLoading = true;
+  if(document.getElementById('chartPageSub') && activeChartTab === 'kwradio'){
+    document.getElementById('chartPageSub').textContent = '⏳ Connexion à Radio Billboard (kworb.net)…';
+  }
+  const chart = await fetchKworbPage(KWORB_RADIO_URL, parseKworbRadio);
+  if(chart){
+    kworbRadioData = chart;
+    kworbRadioLoaded = true;
+    kworbRadioDateUsed = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+    if(activeChartTab === 'kwradio') showToast('Classement Radio Billboard chargé ✓ (kworb.net)','success');
+  } else if(activeChartTab === 'kwradio'){
+    showToast('Connexion à kworb.net impossible pour le moment — réessayez plus tard','err');
+  }
+  kworbRadioLoading = false;
+  if(activeChartTab === 'kwradio') renderChartTable();
+}
+
+async function loadKworbListeners(){
+  if(kworbListenersLoading) return;
+  kworbListenersLoading = true;
+  if(document.getElementById('chartPageSub') && activeChartTab === 'kwtop'){
+    document.getElementById('chartPageSub').textContent = '⏳ Connexion à Top Artistes (kworb.net)…';
+  }
+  const chart = await fetchKworbPage(KWORB_LISTENERS_URL, parseKworbListeners);
+  if(chart){
+    kworbListenersData = chart;
+    kworbListenersLoaded = true;
+    kworbListenersDateUsed = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+    if(activeChartTab === 'kwtop') showToast('Top Artistes chargé ✓ (kworb.net)','success');
+  } else if(activeChartTab === 'kwtop'){
+    showToast('Connexion à kworb.net impossible pour le moment — réessayez plus tard','err');
+  }
+  kworbListenersLoading = false;
+  if(activeChartTab === 'kwtop') renderChartTable();
+}
+
+/** Sources utilisées par la recherche globale (Classements) : toutes celles
+ *  effectivement chargées en mémoire à l'instant T, quel que soit l'onglet
+ *  actif. Radio Billboard exclu volontairement de la génération de labels
+ *  courts n'est pas nécessaire ici — inclus comme les autres. Top Artistes
+ *  exclu : pas de titre associé (classement d'artistes seuls). */
+function chartGlobalSearchSources(){
+  const sources = [];
+  if(chartsLoaded.fr) sources.push({label:'Shazam FR', chart: chartsData.fr});
+  if(chartsLoaded.ww) sources.push({label:'Shazam Monde', chart: chartsData.ww});
+  if(spotifyLoaded)   sources.push({label:'Spotify FR', chart: spotifyData});
+  Object.keys(KWORB_COUNTRIES).forEach(cc => {
+    const st = kworbSpotifyState[cc];
+    if(st && st.loaded) sources.push({label: KWORB_COUNTRIES[cc].label, chart: st.data});
+  });
+  if(deezerLoaded)     sources.push({label:'Deezer FR', chart: deezerData});
+  if(futursHitsLoaded) sources.push({label:'Futurs Hits', chart: futursHitsData});
+  if(appleMusicState.us.loaded) sources.push({label:'Apple Music US', chart: appleMusicState.us.data});
+  if(appleMusicState.fr.loaded) sources.push({label:'Apple Music FR', chart: appleMusicState.fr.data});
+  if(itunesState.fr.loaded)     sources.push({label:'iTunes FR', chart: itunesState.fr.data});
+  if(billboardLoaded)       sources.push({label:'Billboard US', chart: billboardData});
+  if(billboardGlobalLoaded) sources.push({label:'Billboard Global', chart: billboardGlobalData});
+  if(youtubeLoaded)         sources.push({label:'YouTube', chart: youtubeData});
+  if(kworbRadioLoaded)      sources.push({label:'Radio Billboard', chart: kworbRadioData});
+  return sources;
+}
+
+/** Recherche d'un titre ou artiste dans l'ENSEMBLE des classements chargés
+ *  (pas seulement l'onglet Classements actif) — un clic sur un résultat
+ *  ouvre directement la fiche d'évolution complète (même fenêtre que depuis
+ *  le Comité d'Écoute), via openTitleEvolutionModal. */
+function renderChartGlobalSearch(){
+  const input = document.getElementById('chartSearch');
+  const box   = document.getElementById('chartGlobalSearchResults');
+  if(!input || !box) return;
+  const q = norm(input.value || '');
+  if(q.length < 2){ box.style.display = 'none'; box.innerHTML = ''; return; }
+
+  const sources = chartGlobalSearchSources();
+  const matches = {}; // clé norm(artiste)|||norm(titre) → {title, artist, labels}
+  sources.forEach(src => {
+    Object.values(src.chart).forEach(entry => {
+      const t = entry.t || entry.title || '';
+      const a = entry.a || entry.artist || '';
+      if(!t) return;
+      if(!norm(t).includes(q) && !norm(a).includes(q)) return;
+      const key = norm(a) + '|||' + norm(t);
+      if(!matches[key]) matches[key] = { title:t, artist:a, labels: new Set() };
+      matches[key].labels.add(src.label);
+    });
+  });
+
+  const results = Object.values(matches).slice(0, 30);
+  if(!sources.length){
+    box.style.display = 'block';
+    box.innerHTML = `<div style="padding:14px;font-size:12px;color:var(--muted);text-align:center">Aucun classement chargé pour l'instant — ouvrez-en un dans les onglets ci-dessus.</div>`;
+    return;
+  }
+  if(!results.length){
+    box.style.display = 'block';
+    box.innerHTML = `<div style="padding:14px;font-size:12px;color:var(--muted);text-align:center">Aucun résultat dans les ${sources.length} classement${sources.length>1?'s':''} chargé${sources.length>1?'s':''}</div>`;
+    return;
+  }
+
+  box.style.display = 'block';
+  box.innerHTML = results.map(r => {
+    const evoDataAttr = JSON.stringify({artist:r.artist, title:r.title}).replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    const labelsArr = Array.from(r.labels);
+    const shown = labelsArr.slice(0,3).join(' · ') + (labelsArr.length>3 ? ' +' + (labelsArr.length-3) : '');
+    return `<button onclick="closeChartGlobalSearch();openTitleEvolutionModal(this)" data-evotitle="${evoDataAttr}" title="Voir l'évolution complète de ce titre"
+      style="display:block;width:100%;text-align:left;padding:9px 12px;border:none;border-bottom:1px solid var(--border);background:var(--white);cursor:pointer"
+      onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='var(--white)'">
+      <div style="font-size:12px;font-weight:800;color:var(--navy)">${escHtml(r.title)}</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:2px">${escHtml(r.artist)}</div>
+      <div style="font-size:9.5px;font-weight:700;color:var(--muted)">${escHtml(shown)}</div>
+    </button>`;
+  }).join('');
+}
+
+function closeChartGlobalSearch(){
+  const box = document.getElementById('chartGlobalSearchResults');
+  if(box) box.style.display = 'none';
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('#chartSearch') && !e.target.closest('#chartGlobalSearchResults')){
+    closeChartGlobalSearch();
+  }
+});
+
 let chartsData={fr:{},ww:{}};
 let chartsLoaded={fr:false,ww:false};
 let shazamDateUsed = SHAZAM_DATE_BUILTIN;
@@ -4576,6 +4980,10 @@ function enrichResultsWithCharts(){
     r.shzFR=findInChart(activeFR,r.title,r.artist);
     r.shzWW=findInChart(activeWW,r.title,r.artist);
     r.spyFR = spotifyLoaded ? findInSpotify(r.title,r.artist) : null;
+    // Spotify UK / Pays-Bas (kworb.net) — utilisés par le Radar pour détecter
+    // les progressions internationales précoces (voir renderRadarPage).
+    r.spyGB = kworbSpotifyState.gb.loaded ? findInChart(kworbSpotifyState.gb.data, r.title, r.artist) : null;
+    r.spyNL = kworbSpotifyState.nl.loaded ? findInChart(kworbSpotifyState.nl.data, r.title, r.artist) : null;
     // Airplay : lookup dans airplayData si chargé
     if(airplayLoaded){
       const ap = findAirplay(r.title, r.artist);
@@ -7330,7 +7738,7 @@ function renderLifeCyclesPage(){
 
 /** Séries Classements hebdomadaires (Shazam, Spotify, Deezer, Apple Music US/FR, Billboard, Airplay par radio) — asynchrone, via Drive Sync */
 async function getTitleChartsSeries(title, artist){
-  const result = { shzFR: [], shzWW: [], spyFR: [], dzFR: [], bbUS: [], bbG200: [], amUS: [], amFR: [], itUS: [], itFR: [], yt: [], airplay: {} };
+  const result = { shzFR: [], shzWW: [], spyFR: [], spBE: [], spSE: [], spNL: [], dzFR: [], bbUS: [], bbG200: [], amUS: [], amFR: [], itUS: [], itFR: [], yt: [], airplay: {} };
   AIRPLAY_RADIOS.forEach(rad => { result.airplay[rad.key] = []; });
 
   if(DRIVE_SYNC_URL && chartsHistoryIndex.length){
@@ -7350,6 +7758,9 @@ async function getTitleChartsSeries(title, artist){
       if(entry.shzFR)   { const rk = findInChart(entry.shzFR, title, artist);  if(rk) result.shzFR.push({...point, val:rk}); }
       if(entry.shzWW)   { const rk = findInChart(entry.shzWW, title, artist);  if(rk) result.shzWW.push({...point, val:rk}); }
       if(entry.spotify) { const rk = findInChart(entry.spotify, title, artist); if(rk) result.spyFR.push({...point, val:rk}); }
+      if(entry.spBE)    { const rk = findInChart(entry.spBE, title, artist);    if(rk) result.spBE.push({...point, val:rk}); }
+      if(entry.spSE)    { const rk = findInChart(entry.spSE, title, artist);    if(rk) result.spSE.push({...point, val:rk}); }
+      if(entry.spNL)    { const rk = findInChart(entry.spNL, title, artist);    if(rk) result.spNL.push({...point, val:rk}); }
       if(entry.dzFR)    { const rk = findInChart(entry.dzFR, title, artist);    if(rk) result.dzFR.push({...point, val:rk}); }
       if(entry.bbUS)    { const rk = findInChart(entry.bbUS, title, artist);    if(rk) result.bbUS.push({...point, val:rk}); }
       if(entry.bbG200)  { const rk = findInChart(entry.bbG200, title, artist);  if(rk) result.bbG200.push({...point, val:rk}); }
@@ -7375,6 +7786,9 @@ async function getTitleChartsSeries(title, artist){
   if(chartsLoaded.fr){ const rk = findInChart(chartsData.fr, title, artist); if(rk) result.shzFR.push({...todayPoint, val:rk}); }
   if(chartsLoaded.ww){ const rk = findInChart(chartsData.ww, title, artist); if(rk) result.shzWW.push({...todayPoint, val:rk}); }
   if(spotifyLoaded)  { const rk = findInChart(spotifyData, title, artist);   if(rk) result.spyFR.push({...todayPoint, val:rk}); }
+  if(kworbSpotifyState.be.loaded){ const rk = findInChart(kworbSpotifyState.be.data, title, artist); if(rk) result.spBE.push({...todayPoint, val:rk}); }
+  if(kworbSpotifyState.se.loaded){ const rk = findInChart(kworbSpotifyState.se.data, title, artist); if(rk) result.spSE.push({...todayPoint, val:rk}); }
+  if(kworbSpotifyState.nl.loaded){ const rk = findInChart(kworbSpotifyState.nl.data, title, artist); if(rk) result.spNL.push({...todayPoint, val:rk}); }
   if(deezerLoaded)   { const rk = findInChart(deezerData, title, artist);    if(rk) result.dzFR.push({...todayPoint, val:rk}); }
   if(billboardLoaded){ const rk = findInChart(billboardData, title, artist); if(rk) result.bbUS.push({...todayPoint, val:rk}); }
   if(billboardGlobalLoaded){ const rk = findInChart(billboardGlobalData, title, artist); if(rk) result.bbG200.push({...todayPoint, val:rk}); }
@@ -8129,6 +8543,11 @@ function switchChartTab(tab){
   if(airplayMenu) airplayMenu.style.display = 'none';
   const airplayChevronEl = document.querySelector('#chartAirplayGroup .dec-group-chevron');
   if(airplayChevronEl) airplayChevronEl.style.transform = '';
+  // Referme le menu déroulant International s'il était ouvert
+  const intlMenu = document.getElementById('chartIntlGroupMenu');
+  if(intlMenu) intlMenu.style.display = 'none';
+  const intlChevronEl = document.querySelector('#chartIntlGroup .dec-group-chevron');
+  if(intlChevronEl) intlChevronEl.style.transform = '';
   // L'onglet Airplay affiche beaucoup plus de colonnes (12 radios) que les
   // autres classements (marché) : élargir le conteneur pour que le titre et
   // l'artiste restent lisibles sur une seule ligne, comme avant l'ajout
@@ -8136,14 +8555,14 @@ function switchChartTab(tab){
   // (19 radios).
   const wrapEl = document.getElementById('chartsContentWrapper');
   if(wrapEl) wrapEl.style.maxWidth = (tab === 'airplay' || tab === 'emb') ? '1400px' : '900px';
-  const tabs = ['shzfr','shzww','spyfr','dzfr','fh','amus','amfr','itus','itfr','bbus','bbg200','yt'];
-  const ids  = ['chartTabShzFR','chartTabShzWW','chartTabSpyFR','chartTabDzFR','chartTabFH','chartTabAmUS','chartTabAmFR','chartTabItUS','chartTabItFR','chartTabBbUS','chartTabBbG200','chartTabYt'];
+  const tabs = ['shzfr','shzww','spyfr','dzfr','fh','amus','amfr','itfr','bbus','bbg200','yt'];
+  const ids  = ['chartTabShzFR','chartTabShzWW','chartTabSpyFR','chartTabDzFR','chartTabFH','chartTabAmUS','chartTabAmFR','chartTabItFR','chartTabBbUS','chartTabBbG200','chartTabYt'];
   // Couleur de marque de chaque plateforme, utilisée pour le soulignement de l'onglet actif
   const tabBrandColor = {
     chartTabShzFR: 'var(--cyan)', chartTabShzWW: 'var(--cyan)',
     chartTabSpyFR: '#1DB954', chartTabDzFR: '#A238FF', chartTabFH: '#A238FF',
     chartTabAmUS: '#1D1D1F', chartTabAmFR: '#1D1D1F',
-    chartTabItUS: '#1D1D1F', chartTabItFR: '#1D1D1F',
+    chartTabItFR: '#1D1D1F',
     chartTabBbUS: '#111111', chartTabBbG200: '#111111',
     chartTabYt: '#FF0000',
   };
@@ -8168,6 +8587,18 @@ function switchChartTab(tab){
   const embItem      = document.getElementById('chartTabEMB');
   if(airplayItem) airplayItem.classList.toggle('active', tab === 'airplay');
   if(embItem)      embItem.classList.toggle('active', tab === 'emb');
+  // Groupe déroulant International (kworb.net) : même style que le groupe Airplay
+  const INTL_TABS = KWORB_COUNTRY_TABS.concat(['kwradio','kwtop']);
+  const groupBtnIntl = document.getElementById('chartIntlGroup');
+  const inIntlGroup = INTL_TABS.includes(tab);
+  if(groupBtnIntl){
+    groupBtnIntl.style.boxShadow = inIntlGroup ? '0 0 0 1.5px var(--cyan)' : '0 0 0 1px var(--blue-border)';
+    groupBtnIntl.style.opacity   = inIntlGroup ? '1' : '.7';
+  }
+  INTL_TABS.forEach(t => {
+    const it = document.getElementById('chartTabIntl_' + t);
+    if(it) it.classList.toggle('active', tab === t);
+  });
   // Masquer le panneau config proxy Deezer si on quitte Deezer France / Futurs Hits (panneau partagé)
   if(tab !== 'dzfr' && tab !== 'fh'){
     const dp = document.getElementById('deezerProxyPanel');
@@ -8175,7 +8606,7 @@ function switchChartTab(tab){
   }
   // Masquer le panneau config proxy Apple Music si on quitte les onglets Apple Music / iTunes
   // (même proxy Apps Script partagé — voir commentaire sur ITUNES_TAB_COUNTRY)
-  if(tab !== 'amus' && tab !== 'amfr' && tab !== 'itus' && tab !== 'itfr'){
+  if(tab !== 'amus' && tab !== 'amfr' && tab !== 'itfr'){
     const amp = document.getElementById('appleMusicProxyPanel');
     if(amp) amp.style.display = 'none';
   }
@@ -8189,6 +8620,12 @@ function switchChartTab(tab){
     const ytp = document.getElementById('youtubeProxyPanel');
     if(ytp) ytp.style.display = 'none';
   }
+  // Masquer le panneau config proxy kworb.net si on quitte les onglets International
+  if(!KWORB_COUNTRY_TABS.includes(tab) && tab !== 'kwradio' && tab !== 'kwtop'){
+    const kwp = document.getElementById('kworbProxyPanel');
+    if(kwp) kwp.style.display = 'none';
+  }
+  closeChartGlobalSearch();
   updateCompareRadioSelectorVisibility();
   renderChartTable();
   // Chargement à la demande du classement Deezer (uniquement quand on visite l'onglet)
@@ -8201,8 +8638,15 @@ function switchChartTab(tab){
   if(tab === 'amus' && !appleMusicState.us.loaded && !appleMusicState.us.loading) loadAppleMusicChart('amus');
   if(tab === 'amfr' && !appleMusicState.fr.loaded && !appleMusicState.fr.loading) loadAppleMusicChart('amfr');
   // Chargement à la demande du classement iTunes (uniquement quand on visite l'onglet)
-  if(tab === 'itus' && !itunesState.us.loaded && !itunesState.us.loading) loadITunesChart('itus');
   if(tab === 'itfr' && !itunesState.fr.loaded && !itunesState.fr.loading) loadITunesChart('itfr');
+  // Chargement à la demande des classements internationaux kworb.net (Spotify par pays,
+  // Radio Billboard, Top Artistes) — auto-fetch quotidien, aucun import manuel requis.
+  if(KWORB_COUNTRY_TABS.includes(tab)){
+    const cc = tab.slice(2);
+    if(!kworbSpotifyState[cc].loaded && !kworbSpotifyState[cc].loading) loadKworbSpotify(cc);
+  }
+  if(tab === 'kwradio' && !kworbRadioLoaded && !kworbRadioLoading) loadKworbRadio();
+  if(tab === 'kwtop' && !kworbListenersLoaded && !kworbListenersLoading) loadKworbListeners();
   // Chargement à la demande du classement Billboard US (uniquement quand on visite l'onglet)
   if(tab === 'bbus' && !billboardLoaded && !billboardLoading) loadBillboardChart();
   // YouTube : PAS de chargement automatique — quota limité (100 titres/jour),
@@ -8406,6 +8850,124 @@ function renderChartTable(){
       Import CSV Spotify France
       <input type="file" accept=".csv,.txt" style="display:none" onchange="handleSpotifyImport(this)">
     </label>`;
+
+  } else if(KWORB_COUNTRY_TABS.includes(activeChartTab)){
+    // ── Spotify par pays (kworb.net) — auto-fetch quotidien, aucun import manuel ──
+    const cc  = activeChartTab.slice(2);
+    const def = KWORB_COUNTRIES[cc];
+    const st  = kworbSpotifyState[cc];
+    titleEl.innerHTML = logoImg(LOGO_SPOTIFY, 'Spotify', 44) + ' ' + def.label + ' ' + def.flag + ' — Daily Top 200';
+    isEmpty = !st.loaded || Object.keys(st.data).length === 0;
+    if(!isEmpty){
+      subEl.textContent = (st.dateUsed ? 'données du ' + st.dateUsed : 'données live') + ' · ' + Object.keys(st.data).length + ' titres · source kworb.net';
+      const e2RankMap = computeE2RankMap();
+      entries = Object.entries(st.data)
+        .map(([r,e]) => {
+          const title  = e.t||'';
+          const artist = e.a||'';
+          let e2rank = null;
+          if(airplayLoaded){
+            const k1 = norm(artist)+'|||'+norm(title);
+            if(e2RankMap[k1] !== undefined){ e2rank = e2RankMap[k1]; }
+            else {
+              const found = Object.entries(e2RankMap).find(([k]) => {
+                const kt = k.split('|||')[1];
+                return similarity(norm(title), kt) >= 0.75;
+              });
+              if(found) e2rank = found[1];
+            }
+          }
+          return {rank:parseInt(r), title, artist,
+                  streams: e.streams, peak: e.peak, prev: e.prev, days: e.days,
+                  e2rank};
+        })
+        .sort((a,b)=>a.rank-b.rank);
+    } else if(st.loading){
+      subEl.textContent = 'Connexion en cours…';
+    } else {
+      subEl.textContent = 'Aucun classement ' + def.label + ' chargé';
+    }
+    importEl.innerHTML = `<button onclick="loadKworbSpotify('${cc}')" ${st.loading?'disabled':''}
+      style="display:flex;align-items:center;gap:6px;background:#E8F8EF;border:1.5px solid #A8E6CE;border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;font-weight:700;color:#0DA76B"
+      onmouseenter="this.style.background='#C6F1DB'" onmouseleave="this.style.background='#E8F8EF'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      ${st.loading ? 'Connexion…' : (st.loaded ? 'Actualiser' : 'Charger ' + def.label)}
+    </button>
+    <button onclick="toggleKworbProxyPanel()" title="Configurer le proxy kworb.net (partagé International)"
+      style="display:flex;align-items:center;justify-content:center;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;padding:0;flex-shrink:0;cursor:pointer;color:var(--text2)"
+      onmouseenter="this.style.borderColor='#FFD9A0';this.style.color='#B36B00'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>`;
+
+  } else if(activeChartTab === 'kwradio'){
+    // ── Radio Billboard (Airplay US) — kworb.net ──
+    titleEl.innerHTML = '🏆 Radio Billboard (US) — Airplay Songs';
+    isEmpty = !kworbRadioLoaded || Object.keys(kworbRadioData).length === 0;
+    if(!isEmpty){
+      subEl.textContent = (kworbRadioDateUsed ? 'données du ' + kworbRadioDateUsed : 'données live') + ' · ' + Object.keys(kworbRadioData).length + ' titres · source kworb.net';
+      const e2RankMap = computeE2RankMap();
+      entries = Object.entries(kworbRadioData)
+        .map(([r,e]) => {
+          const title  = e.t||'';
+          const artist = e.a||'';
+          let e2rank = null;
+          if(airplayLoaded){
+            const k1 = norm(artist)+'|||'+norm(title);
+            if(e2RankMap[k1] !== undefined){ e2rank = e2RankMap[k1]; }
+            else {
+              const found = Object.entries(e2RankMap).find(([k]) => {
+                const kt = k.split('|||')[1];
+                return similarity(norm(title), kt) >= 0.75;
+              });
+              if(found) e2rank = found[1];
+            }
+          }
+          return {rank:parseInt(r), title, artist, e2rank};
+        })
+        .sort((a,b)=>a.rank-b.rank);
+    } else if(kworbRadioLoading){
+      subEl.textContent = 'Connexion en cours…';
+    } else {
+      subEl.textContent = 'Aucun classement Radio Billboard chargé';
+    }
+    importEl.innerHTML = `<button onclick="loadKworbRadio()" ${kworbRadioLoading?'disabled':''}
+      style="display:flex;align-items:center;gap:6px;background:#FFF4E0;border:1.5px solid #FFD9A0;border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;font-weight:700;color:#B36B00"
+      onmouseenter="this.style.background='#FFE9C2'" onmouseleave="this.style.background='#FFF4E0'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      ${kworbRadioLoading ? 'Connexion…' : (kworbRadioLoaded ? 'Actualiser' : 'Charger Radio Billboard')}
+    </button>
+    <button onclick="toggleKworbProxyPanel()" title="Configurer le proxy kworb.net (partagé International)"
+      style="display:flex;align-items:center;justify-content:center;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;padding:0;flex-shrink:0;cursor:pointer;color:var(--text2)"
+      onmouseenter="this.style.borderColor='#FFD9A0';this.style.color='#B36B00'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>`;
+
+  } else if(activeChartTab === 'kwtop'){
+    // ── Top Artistes Spotify (Monde, auditeurs mensuels) — kworb.net ──
+    // Pas de déclinaison par pays disponible côté kworb pour ce classement.
+    titleEl.innerHTML = '🌍 Top Artistes Spotify — Monde (auditeurs mensuels)';
+    isEmpty = !kworbListenersLoaded || Object.keys(kworbListenersData).length === 0;
+    if(!isEmpty){
+      subEl.textContent = 'classement mondial, non filtrable par pays · ' + Object.keys(kworbListenersData).length + ' artistes · source kworb.net';
+      entries = Object.entries(kworbListenersData)
+        .map(([r,e]) => ({rank:parseInt(r), title:'', artist:e.a||'', e2rank:null}))
+        .sort((a,b)=>a.rank-b.rank);
+    } else if(kworbListenersLoading){
+      subEl.textContent = 'Connexion en cours…';
+    } else {
+      subEl.textContent = 'Aucun Top Artistes chargé';
+    }
+    importEl.innerHTML = `<button onclick="loadKworbListeners()" ${kworbListenersLoading?'disabled':''}
+      style="display:flex;align-items:center;gap:6px;background:#FFF4E0;border:1.5px solid #FFD9A0;border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;font-weight:700;color:#B36B00"
+      onmouseenter="this.style.background='#FFE9C2'" onmouseleave="this.style.background='#FFF4E0'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      ${kworbListenersLoading ? 'Connexion…' : (kworbListenersLoaded ? 'Actualiser' : 'Charger Top Artistes')}
+    </button>
+    <button onclick="toggleKworbProxyPanel()" title="Configurer le proxy kworb.net (partagé International)"
+      style="display:flex;align-items:center;justify-content:center;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;padding:0;flex-shrink:0;cursor:pointer;color:var(--text2)"
+      onmouseenter="this.style.borderColor='#FFD9A0';this.style.color='#B36B00'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>`;
 
   } else if(activeChartTab === 'dzfr'){
     // ── Deezer France ──
@@ -8881,10 +9443,24 @@ function renderChartTable(){
       hintEl.innerHTML = appleMusicState[APPLE_MUSIC_TAB_COUNTRY[activeChartTab]].loading
         ? 'Connexion au classement ' + APPLE_MUSIC_TAB_LABEL[activeChartTab] + ' en cours…'
         : 'Le flux officiel Apple Music ne renvoie pas d\'en-têtes CORS : configurez le proxy ⚙️ (fichier Code_gs_Proxy_AppleMusic.gs à déployer sur script.google.com) puis cliquez sur « Charger ' + APPLE_MUSIC_TAB_LABEL[activeChartTab] + ' » ci-dessus.';
-    else if(activeChartTab === 'itus' || activeChartTab === 'itfr')
+    else if(activeChartTab === 'itfr')
       hintEl.innerHTML = itunesState[ITUNES_TAB_COUNTRY[activeChartTab]].loading
         ? 'Connexion au classement ' + ITUNES_TAB_LABEL[activeChartTab] + ' en cours…'
         : 'Même flux officiel qu\'Apple Music, sans en-têtes CORS : configurez le proxy ⚙️ (même fichier Code_gs_Proxy_AppleMusic.gs, partagé avec Apple Music) puis cliquez sur « Charger ' + ITUNES_TAB_LABEL[activeChartTab] + ' » ci-dessus.';
+    else if(KWORB_COUNTRY_TABS.includes(activeChartTab)){
+      const cc = activeChartTab.slice(2);
+      hintEl.innerHTML = kworbSpotifyState[cc].loading
+        ? 'Connexion à ' + KWORB_COUNTRIES[cc].label + ' (kworb.net) en cours…'
+        : 'Les proxies CORS publics par défaut sont peu fiables (rate-limit, blocage). Configurez le proxy ⚙️ (fichier Code_gs_Proxy_Kworb.gs à déployer sur script.google.com) puis cliquez sur « Charger ' + KWORB_COUNTRIES[cc].label + ' » ci-dessus.';
+    }
+    else if(activeChartTab === 'kwradio')
+      hintEl.innerHTML = kworbRadioLoading
+        ? 'Connexion à Radio Billboard (kworb.net) en cours…'
+        : 'Les proxies CORS publics par défaut sont peu fiables (rate-limit, blocage). Configurez le proxy ⚙️ (même fichier Code_gs_Proxy_Kworb.gs, partagé avec les autres onglets International) puis cliquez sur « Charger Radio Billboard » ci-dessus.';
+    else if(activeChartTab === 'kwtop')
+      hintEl.innerHTML = kworbListenersLoading
+        ? 'Connexion à Top Artistes (kworb.net) en cours…'
+        : 'Les proxies CORS publics par défaut sont peu fiables (rate-limit, blocage). Configurez le proxy ⚙️ (même fichier Code_gs_Proxy_Kworb.gs, partagé avec les autres onglets International) puis cliquez sur « Charger Top Artistes » ci-dessus.';
     else if(activeChartTab === 'yt')
       hintEl.innerHTML = youtubeLoading
         ? 'Recherche YouTube en cours (peut prendre une minute pour 100 titres)…'
@@ -8925,7 +9501,7 @@ function renderChartTable(){
     }).join('');
     hdrEl.style.gridTemplateColumns = '26px 48px 170px ' + AIRPLAY_RADIOS_CHART.map(()=>'52px').join(' ');
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span>' + apCols;
-  } else if(activeChartTab === 'spyfr'){
+  } else if(activeChartTab === 'spyfr' || KWORB_COUNTRY_TABS.includes(activeChartTab)){
     const spyGridH = airplayLoaded ? '26px 48px 170px 90px 36px 64px' : '26px 48px 170px 90px 36px';
     hdrEl.style.gridTemplateColumns = spyGridH;
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span><span style="color:#1DB954;font-weight:800;text-align:right">Streams</span><span style="text-align:center">±</span>' + (airplayLoaded ? '<span style="color:var(--cyan);font-weight:800;text-align:center" title="Rang Europe 2 dans le classement airplay">E2 rang</span>' : '');
@@ -8933,9 +9509,12 @@ function renderChartTable(){
     const ytGridH = airplayLoaded ? '26px 48px 170px 100px 64px' : '26px 48px 170px 100px';
     hdrEl.style.gridTemplateColumns = ytGridH;
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span><span style="color:#FF0000;font-weight:800;text-align:right">Vues</span>' + (airplayLoaded ? '<span style="color:var(--cyan);font-weight:800;text-align:center" title="Rang Europe 2 dans le classement airplay">E2 rang</span>' : '');
-  } else if((activeChartTab === 'shzfr' || activeChartTab === 'dzfr' || activeChartTab === 'fh' || activeChartTab === 'amus' || activeChartTab === 'amfr' || activeChartTab === 'itus' || activeChartTab === 'itfr' || activeChartTab === 'bbus' || activeChartTab === 'bbg200') && airplayLoaded){
+  } else if((activeChartTab === 'shzfr' || activeChartTab === 'dzfr' || activeChartTab === 'fh' || activeChartTab === 'amus' || activeChartTab === 'amfr' || activeChartTab === 'itfr' || activeChartTab === 'bbus' || activeChartTab === 'bbg200' || activeChartTab === 'kwradio') && airplayLoaded){
     hdrEl.style.gridTemplateColumns = '26px 48px 170px 64px 56px';
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span><span style="color:var(--cyan);font-weight:800" title="Rang Europe 2 dans le classement airplay">E2 rang</span><span>LIENS</span>';
+  } else if(activeChartTab === 'kwtop'){
+    hdrEl.style.gridTemplateColumns = '26px 48px 170px 40px';
+    hdrEl.innerHTML = '<span></span><span>#</span><span>ARTISTE</span><span></span>';
   } else {
     hdrEl.style.gridTemplateColumns = '26px 48px 170px 120px';
     hdrEl.innerHTML = '<span></span><span>#</span><span>TITRE / ARTISTE</span><span>LIENS</span>';
@@ -9021,8 +9600,8 @@ function renderChartRow(e){
       </div>
       ${apCols}
     </div>`;
-  } else if(activeChartTab === 'spyfr'){
-    // ── Spotify France ──
+  } else if(activeChartTab === 'spyfr' || KWORB_COUNTRY_TABS.includes(activeChartTab)){
+    // ── Spotify France (import CSV) ou Spotify par pays (kworb.net) ──
     const showE2spy = airplayLoaded;
     // Streams formaté
     const streamsStr = e.streams ? e.streams.toLocaleString('fr-FR') : '–';
@@ -9106,9 +9685,17 @@ function renderChartRow(e){
       </div>
       ${showE2yt ? e2CellYt : ''}
     </div>`;
+  } else if(activeChartTab === 'kwtop'){
+    // ── Top Artistes (Monde, kworb.net) — pas de titre, artiste seul ──
+    return `<div style="display:grid;grid-template-columns:26px 48px 170px 40px;gap:8px;align-items:center;padding:9px 14px;border-radius:8px;background:var(--white);border:1.5px solid ${e.rank<=10?'var(--cyan-mid)':'var(--border)'};margin-bottom:0">
+      <span></span>
+      <div style="font-size:14px;font-weight:${rankFw};color:${rankColor};font-variant-numeric:tabular-nums">#${e.rank}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--navy)">${e.artist||''}</div>
+      ${spotifyLink(e.artist, '')}
+    </div>`;
   } else {
     // Shazam FR ou WW
-    const showE2 = (activeChartTab === 'shzfr' || activeChartTab === 'dzfr' || activeChartTab === 'fh' || activeChartTab === 'amus' || activeChartTab === 'amfr' || activeChartTab === 'itus' || activeChartTab === 'itfr' || activeChartTab === 'bbus' || activeChartTab === 'bbg200') && airplayLoaded;
+    const showE2 = (activeChartTab === 'shzfr' || activeChartTab === 'dzfr' || activeChartTab === 'fh' || activeChartTab === 'amus' || activeChartTab === 'amfr' || activeChartTab === 'itfr' || activeChartTab === 'bbus' || activeChartTab === 'bbg200' || activeChartTab === 'kwradio') && airplayLoaded;
     const gridCols = showE2 ? '26px 48px 170px 64px 56px' : '26px 48px 170px 120px';
 
     let e2Cell = '';
@@ -9262,6 +9849,9 @@ async function buildComiteCard(t, series){
     comiteMiniBadge('🇫🇷', 'SHZ',   series.shzFR, 'var(--navy)'),
     comiteMiniBadge('🌍', 'SHZ WW', series.shzWW, 'var(--text2)'),
     comiteMiniBadge(logoImg(LOGO_SPOTIFY, 'Spotify', 12), '', series.spyFR, '#1DB954'),
+    comiteMiniBadge(logoImg(LOGO_SPOTIFY, 'Spotify', 12), 'BE', series.spBE, '#1DB954'),
+    comiteMiniBadge(logoImg(LOGO_SPOTIFY, 'Spotify', 12), 'SE', series.spSE, '#1DB954'),
+    comiteMiniBadge(logoImg(LOGO_SPOTIFY, 'Spotify', 12), 'NL', series.spNL, '#1DB954'),
     comiteMiniBadge(logoImg(LOGO_DEEZER, 'Deezer', 12), '', series.dzFR, '#A238FF'),
     comiteMiniBadge(logoImg(LOGO_APPLEMUSIC, 'Apple Music', 9), 'FR', series.amFR, '#1D1D1F'),
     comiteMiniBadge(logoImg(LOGO_APPLEMUSIC, 'Apple Music', 9), 'US', series.amUS, '#1D1D1F'),
@@ -9274,7 +9864,7 @@ async function buildComiteCard(t, series){
 
   const airplayBadges = AIRPLAY_RADIOS.map(rad => comiteAirplayBadge(rad, series.airplay[rad.key])).join('');
 
-  const hasAnyData = series.shzFR.length || series.shzWW.length || series.spyFR.length || series.dzFR.length ||
+  const hasAnyData = series.shzFR.length || series.shzWW.length || series.spyFR.length || series.spBE.length || series.spSE.length || series.spNL.length || series.dzFR.length ||
     series.amFR.length || series.amUS.length || series.itFR.length || series.itUS.length || series.yt.length || series.bbUS.length || series.bbG200.length ||
     Object.values(series.airplay).some(a => a.length);
 
@@ -9320,6 +9910,13 @@ async function renderComitePage(){
   if(emptyEl) emptyEl.style.display = 'none';
 
   listEl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted);font-size:12px">⏳ Chargement des classements…</div>';
+
+  // Spotify Belgique/Suède/Pays-Bas (kworb.net) : chargement à la demande si
+  // pas encore visités dans Classements → International, pour que leurs
+  // rangs apparaissent directement sur les cards sans action manuelle.
+  if(!kworbSpotifyState.be.loaded && !kworbSpotifyState.be.loading) await loadKworbSpotify('be');
+  if(!kworbSpotifyState.se.loaded && !kworbSpotifyState.se.loading) await loadKworbSpotify('se');
+  if(!kworbSpotifyState.nl.loaded && !kworbSpotifyState.nl.loading) await loadKworbSpotify('nl');
 
   const cardsHtml = [];
   for(const t of comiteTitles){
@@ -13412,6 +14009,24 @@ document.addEventListener('click', e => {
   }
 });
 
+function toggleChartIntlGroup(e){
+  if(e) e.stopPropagation();
+  const menu = document.getElementById('chartIntlGroupMenu');
+  const chevron = document.querySelector('#chartIntlGroup .dec-group-chevron');
+  if(!menu) return;
+  const open = menu.style.display === 'none' || !menu.style.display;
+  menu.style.display = open ? 'flex' : 'none';
+  if(chevron) chevron.style.transform = open ? 'rotate(180deg)' : '';
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('#chartIntlGroup')){
+    const menu = document.getElementById('chartIntlGroupMenu');
+    const chevron = document.querySelector('#chartIntlGroup .dec-group-chevron');
+    if(menu) menu.style.display = 'none';
+    if(chevron) chevron.style.transform = '';
+  }
+});
+
 async function embChartsActivate(){
   embPopulateSnapshotSelects();
   if(embActiveSnapshotId && (!embRows || !embRows.length)){
@@ -14476,6 +15091,13 @@ async function renderRadarPage(){
     return;
   }
 
+  // Spotify UK / Pays-Bas (kworb.net) : chargement à la demande si l'onglet
+  // Classements → International correspondant n'a pas encore été visité,
+  // pour que le Radar détecte ces progressions sans action manuelle préalable.
+  if(!kworbSpotifyState.gb.loaded && !kworbSpotifyState.gb.loading) await loadKworbSpotify('gb');
+  if(!kworbSpotifyState.nl.loaded && !kworbSpotifyState.nl.loading) await loadKworbSpotify('nl');
+  enrichResultsWithCharts();
+
   // Peupler le sélecteur de radio concurrente (une seule fois)
   const compSel = document.getElementById('radarCompRadio');
   if(compSel && !compSel.dataset.filled){
@@ -14501,6 +15123,8 @@ async function renderRadarPage(){
 
   const threshShz  = parseInt(document.getElementById('radarThreshShz')?.value)  || 5;
   const threshSpy  = parseInt(document.getElementById('radarThreshSpy')?.value)  || 5;
+  const threshSpyGB = parseInt(document.getElementById('radarThreshSpyGB')?.value) || 10;
+  const threshSpyNL = parseInt(document.getElementById('radarThreshSpyNL')?.value) || 10;
   const threshInd  = parseInt(document.getElementById('radarThreshInd')?.value)  || 5;
   const threshGen  = parseInt(document.getElementById('radarThreshGen')?.value)  || 5;
   const threshFH   = parseInt(document.getElementById('radarThreshFH')?.value)   || 3;
@@ -14529,6 +15153,22 @@ async function renderRadarPage(){
       if(prevRank){
         const gain = prevRank - r.spyFR;
         if(gain >= threshSpy) gains.push({icon:'🟢', label:'Spotify FR', gain, from:prevRank, to:r.spyFR});
+      }
+    }
+    // Spotify UK (kworb.net) — signal de progression internationale précoce
+    if(r.spyGB && prevData.spGB){
+      const prevRank = findInChart(prevData.spGB, r.title, r.artist);
+      if(prevRank){
+        const gain = prevRank - r.spyGB;
+        if(gain >= threshSpyGB) gains.push({icon:'🇬🇧', label:'Spotify UK', gain, from:prevRank, to:r.spyGB});
+      }
+    }
+    // Spotify Pays-Bas (kworb.net) — idem
+    if(r.spyNL && prevData.spNL){
+      const prevRank = findInChart(prevData.spNL, r.title, r.artist);
+      if(prevRank){
+        const gain = prevRank - r.spyNL;
+        if(gain >= threshSpyNL) gains.push({icon:'🇳🇱', label:'Spotify Pays-Bas', gain, from:prevRank, to:r.spyNL});
       }
     }
     // Classement Indés Radios (valeur directe, pas dérivée)
@@ -16031,6 +16671,14 @@ async function saveCurrentChartsWeek(customDateStr) {
     shzDate      : shazamDateUsed || null,
     spotify      : spotifyLoaded  ? spotifyData   : null,
     spotifyDate  : spotifyDateUsed || null,
+    spGB         : kworbSpotifyState.gb.loaded ? kworbSpotifyState.gb.data : null,
+    spGBDate     : kworbSpotifyState.gb.dateUsed || null,
+    spBE         : kworbSpotifyState.be.loaded ? kworbSpotifyState.be.data : null,
+    spBEDate     : kworbSpotifyState.be.dateUsed || null,
+    spSE         : kworbSpotifyState.se.loaded ? kworbSpotifyState.se.data : null,
+    spSEDate     : kworbSpotifyState.se.dateUsed || null,
+    spNL         : kworbSpotifyState.nl.loaded ? kworbSpotifyState.nl.data : null,
+    spNLDate     : kworbSpotifyState.nl.dateUsed || null,
     dzFR         : deezerLoaded   ? deezerData    : null,
     dzDate       : deezerDateUsed || null,
     fh           : futursHitsLoaded ? futursHitsData : null,
@@ -16097,6 +16745,10 @@ const CLEAR_SOURCE_FIELDS = {
   shzFR:   ['shzFR', 'shzDate'],
   shzWW:   ['shzWW', 'shzDate'],
   spotify: ['spotify', 'spotifyDate'],
+  spGB:    ['spGB', 'spGBDate'],
+  spBE:    ['spBE', 'spBEDate'],
+  spSE:    ['spSE', 'spSEDate'],
+  spNL:    ['spNL', 'spNLDate'],
   dzFR:    ['dzFR', 'dzDate'],
   fh:      ['fh', 'fhDate'],
   bbUS:    ['bbUS', 'bbDate'],
@@ -16721,10 +17373,14 @@ initPlatformLogosInTabs();
   /* ── Classements : 13 onglets à plat ── */
   const CHART_TABS = [
     ['airplay','📻 Airplay'], ['emb','🌍 Europe Music Benchmark'],
+    ['kwfr','🇫🇷 Spotify France (Intl)'], ['kwus','🇺🇸 Spotify US'], ['kwgb','🇬🇧 Spotify UK'],
+    ['kwde','🇩🇪 Spotify Allemagne'], ['kwes','🇪🇸 Spotify Espagne'], ['kwit','🇮🇹 Spotify Italie'],
+    ['kwbe','🇧🇪 Spotify Belgique'], ['kwse','🇸🇪 Spotify Suède'], ['kwnl','🇳🇱 Spotify Pays-Bas'],
+    ['kwradio','🏆 Radio Billboard (US)'], ['kwtop','🌍 Top Artistes (Monde)'],
     ['shzfr','🇫🇷 Shazam France'], ['shzww','🌍 Shazam Monde'],
     ['spyfr','🟢 Spotify France'], ['dzfr','🟣 Deezer France'], ['fh','🟣 Futurs Hits'],
     ['amus','🍎 Apple Music US'], ['amfr','🍎🇫🇷 Apple Music FR'],
-    ['itus','🛒 iTunes US'], ['itfr','🛒🇫🇷 iTunes FR'],
+    ['itfr','🛒🇫🇷 iTunes FR'],
     ['bbus','🏆 Billboard US'], ['bbg200','🌍 Billboard Global'], ['yt','▶️ YouTube']
   ];
   const chartMenu = document.getElementById('chartTabsMobileMenu');
