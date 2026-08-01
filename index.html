@@ -127,6 +127,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
   #chartTabsBar > div[style*="width:1px;height:26px"],
   #chartAirplayGroup,
   #chartIntlGroup,
+  #chartSpotifyPlaylistsGroup,
   #chartBillboardGroup,
   #chartShazamGroup,
   #chartDeezerGroup,
@@ -1984,7 +1985,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     <!-- Groupes déroulants (Airplay, International) toujours épinglés en
          début de barre — hors de la zone défilante, pour que leurs menus ne
          soient jamais rognés par l'overflow horizontal des onglets simples. -->
-    <div class="dec-group" id="chartAirplayGroup" style="margin-right:10px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1.5px var(--cyan);opacity:1">
+    <div class="dec-group" id="chartAirplayGroup" style="margin-right:10px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1.5px var(--cyan)">
       <button id="chartGroupBtnAirplay" onclick="switchChartTab('airplay')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
         📻 Airplay
       </button>
@@ -1997,7 +1998,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
       </div>
     </div>
     <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
-    <div class="dec-group" id="chartIntlGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border);opacity:.7">
+    <div class="dec-group" id="chartIntlGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border)">
       <button id="chartGroupBtnIntl" onclick="switchChartTab('kwfr')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
         🌍 International
       </button>
@@ -2020,7 +2021,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
     <!-- Groupe Playlists Spotify (éditoriales) — menu rempli dynamiquement
          par renderSpotifyPlaylistsGroupMenu() puisque la liste évolue. -->
-    <div class="dec-group" id="chartSpotifyPlaylistsGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border);opacity:.7">
+    <div class="dec-group" id="chartSpotifyPlaylistsGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border)">
       <button id="chartGroupBtnSpotifyPlaylists" onclick="toggleChartSpotifyPlaylistsGroup(event)" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
         🎧 Playlists Spotify
       </button>
@@ -2031,7 +2032,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     </div>
     <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
     <!-- Groupe Shazam (France + Monde) -->
-    <div class="dec-group" id="chartShazamGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border);opacity:.7">
+    <div class="dec-group" id="chartShazamGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border)">
       <button id="chartGroupBtnShazam" onclick="switchChartTab('shzfr')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
         Shazam
       </button>
@@ -2049,7 +2050,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     </button>
     <div style="width:1px;height:26px;background:var(--border);margin:0 6px;flex-shrink:0"></div>
     <!-- Groupe Deezer (France + Futurs Hits) -->
-    <div class="dec-group" id="chartDeezerGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border);opacity:.7">
+    <div class="dec-group" id="chartDeezerGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border)">
       <button id="chartGroupBtnDeezer" onclick="switchChartTab('dzfr')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
         Deezer
       </button>
@@ -2063,7 +2064,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     </div>
     <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
     <!-- Groupe Apple Music (US, FR + iTunes France) -->
-    <div class="dec-group" id="chartAppleGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border);opacity:.7">
+    <div class="dec-group" id="chartAppleGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border)">
       <button id="chartGroupBtnApple" onclick="switchChartTab('amus')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
         Apple Music
       </button>
@@ -2077,7 +2078,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
       </div>
     </div>
     <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
-    <div class="dec-group" id="chartBillboardGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border);opacity:.7">
+    <div class="dec-group" id="chartBillboardGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border)">
       <button id="chartGroupBtnBillboard" onclick="switchChartTab('bbus')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
         🏆 Billboard
       </button>
@@ -2092,7 +2093,7 @@ button{cursor:pointer;border:none;border-radius:8px;padding:9px 18px;transition:
     </div>
     <div style="width:1px;height:26px;background:var(--border);margin-right:6px;flex-shrink:0"></div>
     <!-- Groupe YouTube (France + pays kworb.net) -->
-    <div class="dec-group" id="chartYoutubeGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border);opacity:.7">
+    <div class="dec-group" id="chartYoutubeGroup" style="margin-right:6px;display:flex;align-items:stretch;height:34px;border-radius:8px;background:var(--blue-bg);box-shadow:0 0 0 1px var(--blue-border)">
       <button id="chartGroupBtnYoutube" onclick="switchChartTab('yt')" style="height:34px;padding:0 10px 0 12px;border:none;background:transparent;color:var(--navy);cursor:pointer;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:6px;border-radius:8px 0 0 8px">
         YouTube
       </button>
@@ -5782,6 +5783,9 @@ function renderSpotifyPlaylistsGroupMenu(){
   menuEl.innerHTML = items
     + (items ? '<div style="height:1px;background:var(--border);margin:4px 8px"></div>' : '')
     + `<button id="chartTabIntl_keyplaylists" onclick="switchChartTab('keyplaylists')" class="dec-subtab-item"><span class="dec-subtab-ic">➕</span>Ajouter / gérer les playlists</button>`;
+  // Section mobile compacte (voir IIFE en fin de fichier) — reconstruite ici
+  // aussi puisque la liste des playlists est dynamique.
+  if(typeof window.renderChartTabsMobileMenu === 'function') window.renderChartTabsMobileMenu();
 }
 
 // ── Proxy Apps Script pour kworb.net — PRIORITAIRE sur les proxies publics ──
@@ -10105,7 +10109,6 @@ function switchChartTab(tab){
   const inAirplayGroup = (tab === 'airplay' || tab === 'emb');
   if(groupBtn){
     groupBtn.style.boxShadow = inAirplayGroup ? '0 0 0 1.5px var(--cyan)' : '0 0 0 1px var(--blue-border)';
-    groupBtn.style.opacity   = inAirplayGroup ? '1' : '.7';
   }
   const airplayItem = document.getElementById('chartTabAirplay');
   const embItem      = document.getElementById('chartTabEMB');
@@ -10117,7 +10120,6 @@ function switchChartTab(tab){
   const inIntlGroup = INTL_TABS.includes(tab);
   if(groupBtnIntl){
     groupBtnIntl.style.boxShadow = inIntlGroup ? '0 0 0 1.5px var(--cyan)' : '0 0 0 1px var(--blue-border)';
-    groupBtnIntl.style.opacity   = inIntlGroup ? '1' : '.7';
   }
   INTL_TABS.forEach(t => {
     const it = document.getElementById('chartTabIntl_' + t);
@@ -10130,7 +10132,6 @@ function switchChartTab(tab){
   const inBBGroup = BB_TABS.includes(tab);
   if(groupBtnBB){
     groupBtnBB.style.boxShadow = inBBGroup ? '0 0 0 1.5px var(--cyan)' : '0 0 0 1px var(--blue-border)';
-    groupBtnBB.style.opacity   = inBBGroup ? '1' : '.7';
   }
   BB_TABS.forEach(t => {
     const it = document.getElementById(BB_ITEM_IDS[t]);
@@ -10152,7 +10153,6 @@ function switchChartTab(tab){
     const inGroup = gTabs.includes(tab);
     if(groupBtnEl){
       groupBtnEl.style.boxShadow = inGroup ? '0 0 0 1.5px var(--cyan)' : '0 0 0 1px var(--blue-border)';
-      groupBtnEl.style.opacity   = inGroup ? '1' : '.7';
     }
     gTabs.forEach(t => {
       const it = document.getElementById(itemIds[t]);
@@ -10166,7 +10166,6 @@ function switchChartTab(tab){
   const inKPGroup = KP_TABS.includes(tab);
   if(groupBtnKP){
     groupBtnKP.style.boxShadow = inKPGroup ? '0 0 0 1.5px var(--cyan)' : '0 0 0 1px var(--blue-border)';
-    groupBtnKP.style.opacity   = inKPGroup ? '1' : '.7';
   }
   keyPlaylists.forEach(p => {
     const it = document.getElementById('chartTabKP_' + p.id);
@@ -19642,7 +19641,7 @@ setTimeout(() => {
   });
 
   /* ── Classements : 13 onglets à plat ── */
-  const CHART_TABS = [
+  const CHART_TABS_BASE = [
     ['__h__','📻 AIRPLAY'],
     ['airplay','📻 Airplay'], ['emb','🌍 Europe Music Benchmark'],
     ['__h__','🌍 INTERNATIONAL (SPOTIFY)'],
@@ -19650,6 +19649,10 @@ setTimeout(() => {
     ['kwde','🇩🇪 Spotify Allemagne'], ['kwes','🇪🇸 Spotify Espagne'], ['kwit','🇮🇹 Spotify Italie'],
     ['kwbe','🇧🇪 Spotify Belgique'], ['kwse','🇸🇪 Spotify Suède'], ['kwnl','🇳🇱 Spotify Pays-Bas'],
     ['kwtop','🌍 Top Artistes (Monde)'],
+    ['__h__','🎧 PLAYLISTS SPOTIFY'],
+    // Section peuplée dynamiquement juste après (liste évolutive) —
+    // placeholder retiré par renderChartTabsMobileMenu().
+    ['__kp__','__kp__'],
     ['__h__','🇫🇷 SHAZAM'],
     ['shzfr','🇫🇷 Shazam France'], ['shzww','🌍 Shazam Monde'],
     ['__h__','🟢 SPOTIFY'],
@@ -19665,15 +19668,31 @@ setTimeout(() => {
     ['ytgb','▶️🇬🇧 YouTube UK'], ['ytnl','▶️🇳🇱 YouTube Pays-Bas'], ['ytbe','▶️🇧🇪 YouTube Belgique'], ['ytse','▶️🇸🇪 YouTube Suède'],
     ['yttrfr','📈 Music Video Trending France'], ['yttrww','📈 Music Video Trending Monde']
   ];
-  const chartMenu = document.getElementById('chartTabsMobileMenu');
-  if(chartMenu){
-    chartMenu.innerHTML = CHART_TABS.map(function(e){
-      if(e[0] === '__h__'){
-        return '<div style="padding:10px 14px 4px;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--muted);border-top:1px solid var(--border);margin-top:2px">'+e[1]+'</div>';
-      }
-      return '<button type="button" class="dec-subtab-item" onclick="switchChartTab(\''+e[0]+'\')">'+e[1]+'</button>';
-    }).join('');
-  }
+  let CHART_TABS = CHART_TABS_BASE;
+  /** (Re)construit le menu compact Classements — appelée une première fois
+   *  au chargement, puis à nouveau à chaque ajout/retrait de Playlist
+   *  Spotify clé (voir renderSpotifyPlaylistsGroupMenu), puisque cette
+   *  section est dynamique contrairement au reste du menu. */
+  window.renderChartTabsMobileMenu = function(){
+    const kpEntries = (typeof keyPlaylists !== 'undefined' ? keyPlaylists : [])
+      .map(p => ['kp_' + p.id, '🎧 ' + p.label]);
+    kpEntries.push(['keyplaylists', '➕ Ajouter / gérer les playlists']);
+    CHART_TABS = [];
+    CHART_TABS_BASE.forEach(entry => {
+      if(entry[0] === '__kp__') CHART_TABS.push(...kpEntries);
+      else CHART_TABS.push(entry);
+    });
+    const chartMenu = document.getElementById('chartTabsMobileMenu');
+    if(chartMenu){
+      chartMenu.innerHTML = CHART_TABS.map(function(e){
+        if(e[0] === '__h__'){
+          return '<div style="padding:10px 14px 4px;font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--muted);border-top:1px solid var(--border);margin-top:2px">'+e[1]+'</div>';
+        }
+        return '<button type="button" class="dec-subtab-item" onclick="switchChartTab(\''+e[0]+'\')">'+e[1]+'</button>';
+      }).join('');
+    }
+  };
+  renderChartTabsMobileMenu();
   if(typeof switchChartTab === 'function'){
     const _switchChartTab = window.switchChartTab;
     window.switchChartTab = function(tab){
